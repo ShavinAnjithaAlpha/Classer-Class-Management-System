@@ -1,9 +1,8 @@
-import os.path
-
-import json5
+import os , json5
+import mysql.connector as mysql
 
 from util.security.access import AccessManager
-import mysql.connector as mysql
+from util.logger import Logger
 
 
 def print_hi(name):
@@ -13,6 +12,7 @@ def print_hi(name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    pass
-
+    # create global instance of connection and loggers
+    global connection, logger
+    connection = mysql.connect()
 

@@ -2,8 +2,6 @@ import json5, os
 import datetime as dt
 import mysql.connector as mysql
 
-from util.security.access import AccessManager
-
 class Logger:
 
     BUFFER_MAX_SIZE = 10
@@ -32,28 +30,27 @@ class Logger:
         }
 
         # special log buffer for events/activity
-        self.events = []
+        self.events = list()
 
 
     def setConnection(self, connection : mysql.MySQLConnection) -> None:
 
         self.connection = connection
 
-    def setAccessManager(self, access_manager : AccessManager):
-
-        self.access_manager = access_manager
-
     def flushBuffer(self, file_name : str, buffer : list) -> None:
 
-        with open(os.path.join(self.LOG_PATH, file_name), mode="r") as file:
-            data = json5.load(file)
+        try:
+            with open(os.path.join(self.LOG_PATH, file_name), mode="r") as file:
+                data = json5.load(file)
+        except ValueError as ex:
+            data = []
 
         if data is not None:
             data = [*data, *buffer]
         else:
             data = buffer
 
-        with open(os.path.join(self.LOG_PATH, file_name), mode="r") as file:
+        with open(os.path.join(self.LOG_PATH, file_name), mode="w") as file:
             json5.dump(data, file, indent=4)
 
         # clear the buffers
@@ -67,7 +64,7 @@ class Logger:
 
     def attachTimeStamp(self, data_dict : dict):
 
-        data_dict["timestamp"] = dt.datetime.now()
+        data_dict["timestamp"] = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     def warning(self, **kwargs):
 
@@ -107,11 +104,14 @@ class Logger:
 
     def flushEvents(self) -> None:
 
-        with open(os.path.join(self.LOG_PATH, "event.json"), mode="r") as file:
-            data = json5.load(file)
+        try:
+            with open(os.path.join(self.LOG_PATH, "event.json"), mode="r") as file:
+                data = json5.load(file)
+        except ValueError as ex:
+            data = []
 
         if data is not None:
-            data = [*data , self.events]
+            data = [*data , *self.events]
         else:
             data = self.events
 
@@ -124,9 +124,14 @@ class Logger:
 
     def passEventsToServer(self, session_id : int):
 
-        with open(os.path.join(self.LOG_PATH, "event.json"), mode="r") as file:
-            events = json5.load(file)
-            # clear the event log file
+        self.flushEvents()
+        try:
+            with open(os.path.join(self.LOG_PATH, "event.json"), mode="r") as file:
+                events = json5.load(file)
+        except ValueError as ex:
+            events = []
+
+        # # clear the event log file
         with open(os.path.join(self.LOG_PATH, "event.json"), mode="w") as file:
             pass
 
@@ -142,10 +147,12 @@ class Logger:
                 ]
             )
 
-        event_save_query = "INSERT INTO events(session_id, time, content) VALUES (%d, %s, %s)"
-        cursor.executemany(event_save_query, event_data)
+        event_save_query = "INSERT INTO events(session_id, time, content) VALUES (%s, %s, %s)"
+        if event_data:
+            cursor.executemany(event_save_query, event_data)
 
         self.connection.commit()
+        # close the cursor
         cursor.close()
 
 
@@ -161,15 +168,19 @@ class Logger:
     def freeUpCache(self, session_id : int) -> None:
 
         cursor = self.connection.cursor()
-        log_insert_query = "INSERT INTO logs(session_id , level, content) VALUES(%d, %s, %s)"
+        log_insert_query = "INSERT INTO logs(session_id , level, content) VALUES(%s, %s, %s)"
         # free the cache log files and pass to the server database
         for file_name in self.log_links.keys():
-            with open(os.path.join(self.LOG_PATH, file_name) , mode="rw") as file:
+            with open(os.path.join(self.LOG_PATH, file_name) , mode="r") as file:
                 data = file.read()
-                file.write("")
 
-                cursor.execute(log_insert_query,
-                               [session_id, self.LEVELS.get(file_name), data])
+
+                if not data == "[]":
+                    cursor.execute(log_insert_query,
+                                   [session_id, self.LEVELS.get(file_name), data])
+
+            with open(os.path.join(self.LOG_PATH, file_name), mode="w") as file:
+                pass
 
         self.connection.commit()
         # close the cursor

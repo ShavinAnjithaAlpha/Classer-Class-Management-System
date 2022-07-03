@@ -9,6 +9,9 @@ main_style_sheet = """
                 QWidget#sidePanel {background-color : QLinearGradient(x1 : 0, y1 : 0, x2 : 1, y2 : 1, stop : 0 rgba(30, 0, 50, 0.8) ,stop : 1 rgba(20, 0, 250, 0.8));
                                 border-radius : 5px;}
                 
+                /**************************** button styling ***************/
+                /***********************************************************/
+                
                 QPushButton {background-color :blue;
                             color  : white;
                             border : 1px solid rgb(0, 0, 200);
@@ -27,6 +30,32 @@ main_style_sheet = """
                                     color : rgb(150, 150, 150)}
                 
                 QPushButton:disabled {background-color : rgb(0, 0, 130)}
+                
+                /***********************************************************/
+                /************** special button styling**********************/
+                
+                QPushButton#red-btn {
+                            background-color : red;
+                            border-radius : 0px;
+                            border : none;
+                            }
+                            
+                QPushButton#red-btn:hover , QPushButton#red-btn:pressed {
+                    background-color : rgb(170, 0, 0);
+                }
+                
+                QPushButton#link {
+                    background : none;
+                    border : none;
+                    color : blue;
+                    font-size : 17px;
+                }
+                
+                QPushButton#link:hover , QPushButton#link:pressed {
+                        color : rgb(0, 100, 255);
+                        cursor : handle}
+                
+                /***********************************************************/
                             
                 QPushButton#mainButtons {background-color : rgba(250,250, 250, 0.6);
                                         color : black;
@@ -194,5 +223,13 @@ main_style_sheet = """
                 QDateTimeEdit {
                         padding : 7px;
                         font-size : 20px;}
+                        
+                
+                QMessageBox {
+                    color : black;
+                }
+                
+                QMessageBox QLabel {
+                        color : black;}
                 
                         """

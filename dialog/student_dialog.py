@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import (QDialog, QWidget, QHBoxLayout, QFormLayout, QGroupB
                              QApplication)
 from PyQt5.QtCore import Qt, QSize
 
-# from file_manager.student_manager import StudentManager
+from util.manager.student_manager import StudentManager
 from style_sheet.main_style_sheet import main_style_sheet
 
 class StudentDialog(QDialog):
@@ -12,19 +12,22 @@ class StudentDialog(QDialog):
         super(StudentDialog, self).__init__()
         self.setModal(True)
         self.setWindowTitle("New Student Dialog")
-        self.resize(500, 500)
+        self.setMinimumWidth(600)
 
         self.initializeUI()
         self.show()
 
     def initializeUI(self):
 
-        # setup the dialog
+        # set up the dialog
         basic_info_group = QGroupBox("Basic Info")
         self.setUpBasicGroup(basic_info_group)
 
         contact_group = QGroupBox("Contact")
         self.setUpContactGroup(contact_group)
+
+        account_group = QGroupBox("Student Account Info")
+        self.setUpAccountGroup(account_group)
 
         # create the id label
         self.id_label = QLabel()
@@ -52,6 +55,7 @@ class StudentDialog(QDialog):
         vbox = QVBoxLayout()
         vbox.addWidget(basic_info_group)
         vbox.addWidget(contact_group)
+        vbox.addWidget(account_group)
         vbox.addWidget(self.id_label)
         vbox.addLayout(hbox)
 
@@ -59,7 +63,7 @@ class StudentDialog(QDialog):
 
     def setUpBasicGroup(self, group : QGroupBox):
 
-        # create the fileds
+        # create the fields
         self.first_name_entry = QLineEdit()
         self.first_name_entry.returnPressed.connect(lambda : self.last_name_entry.setFocus())
 
@@ -127,10 +131,33 @@ class StudentDialog(QDialog):
         form = QFormLayout()
         form.setLabelAlignment(Qt.AlignRight)
 
-        form.addRow("TelePhone Number", self.tel_number_edit)
-        form.addRow("Parent Telephone Number", self.parent_tel_edit)
+        form.addRow("Student Contact Number", self.tel_number_edit)
+        form.addRow("Parent Contact Number", self.parent_tel_edit)
 
         group.setLayout(form)
+
+    def setUpAccountGroup(self, group = QGroupBox):
+
+        # create username fields
+        self.username_edit = QLineEdit()
+        self.username_edit.returnPressed.connect(lambda : self.password_edit.setFocus())
+
+        self.password_edit = QLineEdit()
+        self.password_edit.setEchoMode(QLineEdit.Password)
+        self.password_edit.returnPressed.connect(lambda : self.password_confirmation_edit.setFocus())
+
+        self.password_confirmation_edit = QLineEdit()
+        self.password_confirmation_edit.setEchoMode(QLineEdit.Password)
+
+        form = QFormLayout()
+        form.setLabelAlignment(Qt.AlignRight)
+
+        form.addRow("Username", self.username_edit)
+        form.addRow("Password", self.password_edit)
+        form.addRow("Confirm Password", self.password_confirmation_edit)
+
+        group.setLayout(form)
+
 
     def accept(self) -> None:
 
@@ -142,7 +169,7 @@ class StudentDialog(QDialog):
 
         super().accept()
 
-    def showID(self):
+    def showID(self) -> None:
 
         # check the all of the requred data is filled
         if self.first_name_entry.text() == "":
@@ -161,6 +188,10 @@ class StudentDialog(QDialog):
             self.parent_tel_edit.setFocus()
             return
 
+        if self.password_edit.text() == "" or not self.password_edit.text() == self.password_confirmation_edit.text():
+            self.password_edit.setFocus()
+            return
+
         sex = "male" if self.radio_group.checkedId() == 0 else "female"
         # build the data
         self.data = {"firstName" : self.first_name_entry.text(),
@@ -174,8 +205,6 @@ class StudentDialog(QDialog):
 
             }
 
-        # create the class manager
-        class_manager  = StudentManager()
         if class_manager.getFromKey("id") == []:
             index = 1
         else:

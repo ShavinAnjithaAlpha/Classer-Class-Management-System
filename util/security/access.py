@@ -47,6 +47,21 @@ class AccessManager:
                             
                             FOREIGN KEY (session_id) REFERENCES sessions(id)
                             );
+                            
+            CREATE TABLE students(
+                            id INT AUTO_INCREMENT UNIQUE PRIMARY KEY NOT NULL ,
+                            username VARCHAR(150) UNIQUE NOT NULL ,
+                            password VARCHAR(150) UNIQUE NOT NULL ,
+                            first_name TEXT NOT NULL ,
+                            last_name TEXT NOT NULL ,
+                            address TEXT NOT NULL ,
+                            school TEXT,
+                            birthday DATE NOT NULL ,
+                            sex ENUM('male', 'female', 'other') NOT NULL ,
+                            student_contact VARCHAR(13),
+                            parent_contact VARCHAR(13) NOT NULL,
+                            added_at DATETIME NOT NULL 
+                        );
             
     
     """
@@ -55,7 +70,8 @@ class AccessManager:
         "warnings.log",
         "error.log",
         "debug.log",
-        "info.log"
+        "info.log",
+        "event.json"
     ]
 
 
@@ -65,16 +81,16 @@ class AccessManager:
         # create empty session dict
         self.session = {}
 
-    def setConnection(self, connection : mysql.MySQLConnection):
+    def setConnection(self, connection : mysql.MySQLConnection) -> None:
         self.connection = connection
 
 
-    def setDatabse(self, databse : str):
+    def setDatabse(self, databse : str) -> None:
 
         if self.connection is not None:
             self.connection.database = databse
 
-    def attachLogger(self, logger : Logger):
+    def attachLogger(self, logger : Logger) -> None:
 
         self.logger = logger
 
@@ -108,14 +124,27 @@ class AccessManager:
         else:
             raise ConnectionError("Cannot be connected to the Database Server! Please try again!")
 
-    def getAdminData(self, data_dict : dict) -> None:
+    def saveAdminData(self, data_dict : dict) -> None:
 
         # get the cursor object using connection
         cursor = self.connection.cursor()
 
-        admin_query = "INSERT INTO settings(field, text_value) VALUES (%s, %s)"
+        admin_text_query = "INSERT INTO settings(field, text_value) VALUES (%s, %s)"
+        admin_int_query = "INSERT INTO settings(field, number_value) VALUES (%s, %s)"
+        admin_float_query = "INSERT INTO settings(field, float_value) VALUES (%s, %s)"
+        admin_bool_query = "INSERT INTO settings(field, bool_value) VALUES (%s, %s)"
 
-        cursor.executemany(admin_query, data_dict.items())
+        for field , value in data_dict.items():
+            # save there values based on  its types
+            if isinstance(value, str):
+                cursor.execute(admin_text_query, (field, value))
+            elif isinstance(value, int):
+                cursor.execute(admin_int_query, [field, value])
+            elif isinstance(value, float):
+                cursor.execute(admin_float_query, [field, value])
+            elif isinstance(value, bool):
+                cursor.execute(admin_bool_query, [field, value])
+
         # save the changes
         self.connection.commit()
         cursor.close()
@@ -138,23 +167,27 @@ class AccessManager:
         cursor = self.connection.cursor()
         auth_query = "SELECT text_value FROM settings WHERE field = %s LIMIT 1"
 
-        cursor.execute(auth_query, ("password"))
+        cursor.execute(auth_query, ("password", ))
+        admin_pw = cursor.fetchone()[0]
         cursor.close()
         # check whether password is correct or not
-        return cursor.fetchone()[0] == password
+        return admin_pw == password
 
     def logToSystem(self, username : str, password : str) -> int:
 
         cursor = self.connection.cursor()
 
-        admin_query = "SELECT text_value FROM settings WHERE field = %s LIMIT 1"
-        cursor.executemany(admin_query, [["username",] , ["password"]])
-
+        # get admin username and password using setting table
         admin, admin_pw = None, None
-        admin_field = cursor.fetchone()
-        if admin_field:
-            admin, admin_pw = tuple(admin_field)
+        admin_query = "SELECT text_value FROM settings WHERE field = %s LIMIT 1"
 
+        cursor.execute(admin_query, ["username",] )
+        admin = cursor.fetchone()[0]
+
+        cursor.execute(admin_query, ["password", ])
+        admin_pw = cursor.fetchone()[0]
+
+        # get user password under given username if the user exists
         user_query = "SELECT id, password FROM users WHERE username = %s LIMIT 1"
         cursor.execute(user_query , [username, ])
 
@@ -164,6 +197,7 @@ class AccessManager:
             user_id, user_pw = tuple(user_data)
         cursor.close()
 
+        # checking usernames and given passwords for matching
         if (admin is not None and admin_pw is not None) and (username == admin and password == admin_pw):
             self.session["level"] = 1
             self.session["user_id"] = -1
@@ -179,20 +213,79 @@ class AccessManager:
         else:
             return 0
 
+    def getUsers(self) -> list[list[str]]:
+
+        cursor = self.connection.cursor()
+        user_get_query = "SELECT id, username, email, created_at FROM users ORDER BY id"
+
+        cursor.execute(user_get_query)
+        users_data = cursor.fetchall()
+
+        cursor.close()
+        return users_data
+
+    def deleteUser(self, user_id : int) -> bool:
+
+        cursor = self.connection.cursor()
+
+        user_delete_query = "DELETE FROM users WHERE id = %s"
+        try:
+            cursor.execute(user_delete_query, (user_id, ))
+            cursor.close()
+            return True
+        except Exception as ex:
+            print(ex)
+            cursor.close()
+            return False
+
+    def isExists(self, key : str , value : str) -> bool:
+
+        cursor = self.connection.cursor()
+        user_exists_query = f"SELECT * FROM users WHERE {key} = %s LIMIT 1"
+
+        cursor.execute(user_exists_query, (value,))
+        if cursor.fetchone() == []:
+            cursor.close()
+            return False
+        else:
+            cursor.close()
+            return True
+
+    def isExistsByUsername(self, username : str) -> bool:
+
+        return self.isExists("username", username)
+
+    def isExistsByEmail(self, email : str) -> bool:
+
+        return self.isExists("email", email)
+
+    def isPasswordDuplicate(self, password : str) -> bool:
+
+        return self.isExists("password", password)
+
     def endSession(self):
 
         # end the session with save session data to sessions table
         cursor = self.connection.cursor()
-        session_query = "INSERT INTO sessions(user_id, level, start_at, end_at) VALUES (%d, %s. %s, %s)"
+        session_query = "INSERT INTO sessions(user_id, level, start_at, end_at) VALUES (%s, %s, %s, %s)"
+        if self.session["level"] == 1:
+            level = "Admin"
+        else:
+            level = "User"
+
         cursor.execute(session_query,
-                       (self.session["user_id"], self.session["level"], self.session["started_at"] ,datetime.datetime.now()))
+                       (self.session["user_id"], level,
+                        self.session["started_at"].strftime("%Y-%m-%d %H:%M:%S") ,
+                        datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                       )
 
         session_id = cursor.lastrowid
         # cached the log files to database
+        self.logger.flush() # flush the un stored log buffers
         self.logger.passEventsToServer(session_id)
         self.logger.freeUpCache(session_id)
 
         self.connection.commit()
         cursor.close()
-        # finally close the connection
-        self.connection.close()
+        # # finally close the connection
+        # self.connection.close()

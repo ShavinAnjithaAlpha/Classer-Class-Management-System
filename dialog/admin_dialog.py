@@ -5,11 +5,14 @@ from PyQt5.QtWidgets import (QApplication, QDialog, QGroupBox, QFormLayout, QVBo
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QFont
 
+from util.security.access import AccessManager
+
 from style_sheet.main_style_sheet import main_style_sheet
 
-class UserDialog(QDialog):
-    def __init__(self, parent = None):
-        super(UserDialog, self).__init__(parent)
+class AdminDialog(QDialog):
+    def __init__(self, parent = None, access_manager : AccessManager = None):
+        super(AdminDialog, self).__init__(parent)
+        self.access_manager = access_manager
         self.setModal(True)
         self.resize(500, 400)
         self.setWindowTitle("User Profile Dialog")
@@ -59,7 +62,7 @@ class UserDialog(QDialog):
 
     def setUpBasicBox(self, group : QGroupBox):
 
-        # create the feleds
+        # create the fields
         self.first_name_entry = QLineEdit()
 
         self.last_name_entry = QLineEdit()
@@ -86,6 +89,7 @@ class UserDialog(QDialog):
 
         self.ins_name_entry  = QLineEdit()
         self.ins_address_entry = QLineEdit()
+        self.ins_address_entry.returnPressed.connect(lambda :self.ins_number_entry.setFocus())
         self.ins_number_entry  = QLineEdit()
 
         self.ins_number_entry.setInputMask("xxx-xx xx xxx")
@@ -98,9 +102,10 @@ class UserDialog(QDialog):
 
         group.setLayout(form)
 
-        [self.required_fileds.append(i) for i in (self.ins_number_entry, self.ins_address_entry)]
+        [self.required_fileds.append(i) for i in (self.ins_name_entry, self.ins_address_entry, self.ins_number_entry)]
 
     def setUpContactBox(self, group : QGroupBox):
+
 
         self.per_number = QLineEdit()
         self.per_number.setInputMask("xxx-xx xx xxx")
@@ -108,6 +113,10 @@ class UserDialog(QDialog):
         self.email_entry = QLineEdit()
         self.whatsapp_entry = QLineEdit()
         self.whatsapp_entry.setInputMask("xxx-xx xx xxx")
+
+        self.ins_number_entry.returnPressed.connect(lambda: self.per_number.setFocus())
+        self.per_number.returnPressed.connect(lambda : self.whatsapp_entry.setFocus())
+        self.whatsapp_entry.returnPressed.connect(lambda : self.email_entry.setFocus())
 
         form = QFormLayout()
         form.setLabelAlignment(Qt.AlignRight)
@@ -117,7 +126,7 @@ class UserDialog(QDialog):
 
         group.setLayout(form)
 
-        [self.required_fileds.append(i) for i in (self.per_number, )]
+        [self.required_fileds.append(i) for i in (self.per_number, self.email_entry, self.whatsapp_entry)]
 
     def setUpSecurityBox(self, group : QGroupBox):
 
@@ -188,30 +197,30 @@ class UserDialog(QDialog):
             "First Name" : self.first_name_entry.text(),
             "Last Name" : self.last_name_entry.text(),
             "Quality" : self.qualify_entry.text(),
-            "Username" : self.user_name_entry.text(),
+            "username" : self.user_name_entry.text(),
 
             "Institute Name" : self.ins_name_entry.text(),
             "Institute Address" : self.ins_address_entry.text(),
-            "Institute LAN Number" : self.ins_number_entry.text(),
+            "Institute Number(LAN)" : self.ins_number_entry.text(),
 
             "Personal Telephone Number" : self.per_number.text(),
             "WhatsApp Contact" : self.whatsapp_entry.text(),
             "Email" : self.email_entry.text(),
 
-            "Password" : self.enter_pw.text(),
-            "Pin" : int(self.exit_pin.text())
+            "password" : self.enter_pw.text(),
+            "pin" : int(self.exit_pin.text())
         }
 
-        with open("db/profile.json", "w") as file:
-            json.dump(data, file, indent=4)
+        self.access_manager.saveAdminData(data)
 
-        QMessageBox.information(self, "User Dialog Message", "User Profile Update Successfull", QMessageBox.StandardButton.Ok)
+        QMessageBox.information(self, "Admin Profile", "Admin Profile Update Successful", QMessageBox.StandardButton.Ok)
 
         super().accept()
+        return data
 
 
 if __name__ == "__main__":
     app = QApplication([])
     app.setStyleSheet(main_style_sheet)
-    window = UserDialog()
+    window = AdminDialog()
     app.exec_()
