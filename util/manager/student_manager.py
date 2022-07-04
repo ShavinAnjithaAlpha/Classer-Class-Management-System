@@ -95,10 +95,14 @@ class StudentManager:
             student_list = cursor.fetchmany(limit)
         else:
             student_list = cursor.fetchall()
-        cursor.close()
+
+
         # log the event
         self.logger.info(location = self.LOCATION, content = "searching for students",
                          result_count = cursor.rowcount)
+        # reset and close the cursor
+        cursor.reset()
+        cursor.close()
 
         if labeled:
             _student_list = []
@@ -113,17 +117,21 @@ class StudentManager:
         else:
             return student_list
 
-    def searchStudentByName(self, name : str, labeled = False, limit : int = None) -> list[dict]:
+    def searchStudentByName(self, name : str, labeled = False, limit : int = None, order = "id") -> list[dict]:
 
-        student_search_query = "SELECT * FROM students WHERE first_name LIKE '%{}%' OR last_name LIKE '%{}%' ".format(
-            name, name
+        student_search_query = "SELECT * FROM students WHERE first_name LIKE '%{}%' OR last_name LIKE '%{}%' ORDER BY {}".format(
+            name, name, order
         )
         return self.fetchStudentByKey(student_search_query, labeled, limit = limit)
 
-    def getStudentByUsername(self, username : str, labeled = False, limit : int = None) -> list[dict]:
+    def getStudentByUsername(self, username : str, labeled = False, limit : int = None) -> dict:
 
         student_search_query = "SELECT * FROM students WHERE username = %s"
-        return self.fetchStudentByKey(student_search_query, labeled, params=(username,), limit=limit)
+        std = self.fetchStudentByKey(student_search_query, labeled, params=(username,), limit=limit)
+        if std == []:
+            return None
+        else:
+            return std[0]
 
     def getStudentById(self, std_id : int) -> dict:
 
@@ -138,8 +146,8 @@ class StudentManager:
 
         _key = self.getKey(key)
         if _key:
-            search_query = "SELECT * FROM students WHERE %s LIKE = '%{}%' ".format(value)
-            return self.fetchStudentByKey(search_query, labeled, params=(_key,), limit = limit)
+            search_query = "SELECT * FROM students WHERE {} LIKE %s ".format(_key)
+            return self.fetchStudentByKey(search_query, labeled, params=('%{}%'.format(value), ), limit = limit)
         else:
             return []
 
@@ -150,12 +158,12 @@ class StudentManager:
 
     def getValuesFromKey(self, key : str, order : str = "id", limit : int  = None) -> list:
 
-        _key = self.getKey()
+        _key = self.getKey(key)
         if _key:
             cursor = self.connection.cursor()
 
-            search_query = "SELECT %s FROM students ORDER BY %s"
-            cursor.execute(search_query, (_key, order))
+            search_query = "SELECT {} FROM students ORDER BY %s".format(_key)
+            cursor.execute(search_query, (order, ))
 
             if limit:
                 result_set = cursor.fetchmany(limit)
@@ -172,12 +180,14 @@ class StudentManager:
     def updateStudent(self, std_id : int, key : str ,new_value) -> bool:
 
         _key = self.getKey(key)
+        std_id = int(std_id)
         if _key:
+
             cursor = self.connection.cursor()
 
-            update_query = "UPDATE students SET %s = %s WHERE id = %s"
+            update_query = "UPDATE students SET {} = %s WHERE id = %s".format(_key)
             try:
-                cursor.execute(update_query, (_key , new_value, std_id))
+                cursor.execute(update_query, (new_value, std_id))
                 # log the event
                 self.logger.event(location = self.LOCATION, content = "update a student",
                                   updated_field = _key)
