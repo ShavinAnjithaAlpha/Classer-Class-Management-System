@@ -16,12 +16,18 @@ class DateTimeUtil:
 
     # create the additional static method for utility
     @staticmethod
-    def isCrash(ex_time1 : time, ex_time2 : time , new_time1 : time , new_time2 : time):
+    def isCrash(ex_time1 : time, ex_time2 : time , new_time1 : time , new_time2 : time) -> bool:
+        if isinstance(ex_time1, datetime):
+            ex_time1 = ex_time1.time()
+            ex_time2 = ex_time2.time()
+
         min_time = min(ex_time1, ex_time2)
         max_time = max(ex_time1, ex_time2)
 
         new_min = min(new_time1, new_time2)
         new_max = max(new_time1, new_time2)
+
+        print(type(ex_time1), type(ex_time2), type(new_time1), type(new_time2))
 
         if (new_max < max_time and new_max > min_time):
             return True

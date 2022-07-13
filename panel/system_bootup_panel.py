@@ -1,15 +1,16 @@
 import os, json5
 import mysql.connector as ms
 
-from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox ,QGroupBox, QFormLayout ,QGridLayout, QVBoxLayout, QLabel, QLineEdit, QPushButton
-from PyQt6.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox,QErrorMessage ,QGroupBox, QFormLayout ,QGridLayout, QVBoxLayout, QLabel, QLineEdit, QPushButton
+from PyQt5.QtCore import pyqtSignal ,QSize
 
 from style_sheet.boot_panel_style_sheet import style_sheet
 from style_sheet.main_style_sheet import main_style_sheet
 
 class BootPanel(QWidget):
 
-    finished_signal = pyqtSignal()
+    finished_signal = pyqtSignal(dict)
+    quit_signal = pyqtSignal()
 
     def __init__(self):
         super(BootPanel, self).__init__()
@@ -17,6 +18,8 @@ class BootPanel(QWidget):
 
         self.setContentsMargins(0, 0, 0, 0)
         self.setStyleSheet(style_sheet)
+        self.adjustSize()
+
 
     def initializePanel(self):
 
@@ -33,11 +36,12 @@ class BootPanel(QWidget):
         # initialize the system connection form
         self.setUpConnectionForm(widget)
 
-        # exit button
-        exit_button = QPushButton("X", widget)
-        exit_button.move(0, 0)
-        exit_button.setObjectName("red-btn")
-        exit_button.pressed.connect(lambda : QApplication.exit(0))
+        # create close button for panel
+        close_button = QPushButton("X", self.widget)
+        close_button.setObjectName("red-btn")
+        close_button.setFixedWidth(60)
+        close_button.move(self.width() - close_button.width(), 0)
+        close_button.pressed.connect(lambda: self.quit_signal.emit())
 
 
         vbox = QVBoxLayout()
@@ -100,24 +104,41 @@ class BootPanel(QWidget):
         # create temporal connection
         try:
             _connection = ms.connect(host=data[0], user=data[1], password=data[2])
+
+            msg_box = QMessageBox(self)
+            msg_box.setWindowTitle("server connection status")
+            if _connection.is_connected():
+                msg_box.setText("""Server successfully connected\n
+                                    \tMySQL version {}\n\t
+                                         status : {}""".format(_connection.get_server_version(),
+                                                               _connection.get_server_info()))
+
+            else:
+                msg_box.setText("Server connection unsuccessful.")
+            # show message box
+            msg_box.show()
+            _connection.close()
+
         except Exception as ex:
-            ex_msg = str(ex)
+            msg = QErrorMessage(self)
+            msg.showMessage(str(ex))
+            msg.show()
 
-        msg_box = QMessageBox(self)
-        msg_box.setWindowTitle("server connection status")
-        if _connection.is_connected():
-            msg_box.setText("""Server successfully connected\n
-                             MySQL version {}\n
-                             status : {}""".format(_connection.get_server_version(),
-                                                  _connection.get_server_info()))
 
-        else:
-            msg_box.setText("Server connection unsuccessful.")
-        # show message box
-        msg_box.exec_()
-        msg_box.show()
 
     def setUpConnection(self, data : dict[str , str]) -> None:
+
+        try:
+            _con = ms.connect(**data)
+            if not _con.is_connected():
+                err_msg = QErrorMessage(self)
+                err_msg.showMessage("Database Server nor connected! please try again")
+                return
+        except ms.Error as ex:
+            err_msg = QErrorMessage(self)
+            err_msg.showMessage(str(ex))
+            return
+
 
         if not os.path.exists("settings"):
             # save server settings to json file in setting directory
@@ -128,13 +149,13 @@ class BootPanel(QWidget):
                 json5.dump(data, file, indent=4)
 
         # emit the finished signal
-        self.finished_signal.emit()
+        self.finished_signal.emit(data)
 
 if __name__ == "__main__":
     app = QApplication([])
     app.setStyleSheet(main_style_sheet)
     window = BootPanel()
-    window.showFullScreen()
+    # window.showFullScreen()
     window.show()
 
     app.exec_()

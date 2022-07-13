@@ -1,13 +1,7 @@
 main_style_sheet = """
                 
-                QWidget {font-family : segoe UI;
+                QWidget {font-family : Arial;
                         font-weight : 18px;}                    
-                
-                QWidget#mainPage {background-image : url(images/system_images/wallpaper.jpg);
-                                background-position : center center;}
-                
-                QWidget#sidePanel {background-color : QLinearGradient(x1 : 0, y1 : 0, x2 : 1, y2 : 1, stop : 0 rgba(30, 0, 50, 0.8) ,stop : 1 rgba(20, 0, 250, 0.8));
-                                border-radius : 5px;}
                 
                 /**************************** button styling ***************/
                 /***********************************************************/
@@ -32,16 +26,17 @@ main_style_sheet = """
                 QPushButton:disabled {background-color : rgb(0, 0, 130)}
                 
                 /***********************************************************/
-                /************** special button styling**********************/
+                /***************special button styling**********************/
                 
-                QPushButton#red-btn {
-                            background-color : red;
+                QPushButton#red-btn , QPushButton[text='x'], QPushButton[text='X'] {
+                            background-color : none;
                             border-radius : 0px;
                             border : none;
                             }
                             
-                QPushButton#red-btn:hover , QPushButton#red-btn:pressed {
-                    background-color : rgb(170, 0, 0);
+                QPushButton#red-btn:hover , QPushButton#red-btn:pressed ,
+                 QPushButton[text='x']:hover, QPushButton[text='X']:hover {
+                    background-color : red;
                 }
                 
                 QPushButton#link {
@@ -54,6 +49,13 @@ main_style_sheet = """
                 QPushButton#link:hover , QPushButton#link:pressed {
                         color : rgb(0, 100, 255);
                         cursor : handle}
+                        
+                QPushButton[text='close'], QPushButton[text='Close'], QPushButton[text='No'] {
+                        background-color : red;
+                        border : none;}
+                        
+                QPushButton[text='close']:hover, QPushButton[text='Close']:hover, QPushButton[text='No']:hover {
+                        background-color : rgb(200, 50, 0);}
                 
                 /***********************************************************/
                             
@@ -94,7 +96,8 @@ main_style_sheet = """
                 
                 QPushButton#notRoundButton {border-radius : 0px;}
                                         
-                QLabel {background : none;}
+                QLabel {background : none;
+                        color : black;}
                 
                 QLabel#timeLabel {color : rgb(0, 200, 50)}
                 
@@ -149,7 +152,7 @@ main_style_sheet = """
                 
                             
                 QSpinBox , QDoubleSpinBox {font-size : 16px;
-                            padding : 7px;}
+                                            padding : 7px;}
                             
                 QListWidgetItem {font-size : 16px;
                             border-radius : 3px;}
@@ -162,14 +165,24 @@ main_style_sheet = """
                                     
                 QDialog QPushButton:hover {background-color : rgb(0, 0, 200);}
                 
-                QDialog QLabel {font-size : 16px;} 
+                QDialog QPushButton[text='No'] {
+                        background-color : red;
+                        border : none;}
+                
+                QDialog QLabel {font-size : 16px;
+                            color : black;} 
                 
                 QInputDialog QLineEdit {min-width : 300px;
                                         padding : 5px;}
                                         
-                QMessageBox QLabel {font-size : 15px;}
+                QMessageBox QLabel {font-size : 17px;
+                                    color : black}
                 
                 QMessageBox QPushButton {width : 100px;}
+                
+                QMessageBox QPushButton[text='No'] {
+                        background-color : red;
+                        border : none;}
                                         
                 QHeaderView::section {background-color : rgb(0, 100, 250);
                                     border : none;
@@ -224,12 +237,5 @@ main_style_sheet = """
                         padding : 7px;
                         font-size : 20px;}
                         
-                
-                QMessageBox {
-                    color : black;
-                }
-                
-                QMessageBox QLabel {
-                        color : black;}
                 
                         """

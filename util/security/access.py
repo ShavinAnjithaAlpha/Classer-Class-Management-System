@@ -62,6 +62,44 @@ class AccessManager:
                             parent_contact VARCHAR(13) NOT NULL,
                             added_at DATETIME NOT NULL 
                         );
+                        
+            CREATE TABLE classes(
+                            id INTEGER AUTO_INCREMENT UNIQUE PRIMARY KEY NOT NULL ,
+                            class_name VARCHAR(250) UNIQUE NOT NULL,
+                            description TEXT DEFAULT NULL,
+                            subject VARCHAR(150) NOT NULL ,
+                            grade INT NOT NULL ,
+                            payment_method ENUM("DAILY", "MONTHLY") NOT NULL DEFAULT "MONTHLY",
+                            fees DOUBLE NOT NULL ,
+                            started_at DATE NOT NULL,
+                            available BOOLEAN NOT NULL DEFAULT TRUE
+            );
+            
+            
+            CREATE TABLE class_times(
+                            id INTEGER AUTO_INCREMENT UNIQUE PRIMARY KEY NOT NULL ,
+                            class_id INTEGER NOT NULL,
+                            day_of_week SMALLINT NOT NULL,
+                            start_time TIME NOT NULL ,
+                            end_time TIME NOT NULL ,
+                        
+                            FOREIGN KEY (class_id) REFERENCES classes(id)
+                        );
+                        
+            CREATE TABLE class_instance(
+                            id INTEGER AUTO_INCREMENT UNIQUE PRIMARY KEY NOT NULL ,
+                            class_id INTEGER NOT NULL ,
+                            year INTEGER NOT NULL ,
+                            students TEXT NOT NULL ,
+                            started_at DATE NOT NULL ,
+                            initial_count INTEGER NOT NULL ,
+                            current_count INTEGER NOT NULL ,
+                            finished BOOLEAN NOT NULL DEFAULT FALSE,
+                            ended_at DATE,
+                        
+                            FOREIGN KEY (class_id) REFERENCES classes(id)
+                        );
+
             
     
     """
@@ -117,7 +155,7 @@ class AccessManager:
                         pass
 
             # commit the changes to the database
-            # connection.commit()
+            connection.commit()
             cursor.close()
             connection.close()
 
@@ -134,20 +172,26 @@ class AccessManager:
         admin_float_query = "INSERT INTO settings(field, float_value) VALUES (%s, %s)"
         admin_bool_query = "INSERT INTO settings(field, bool_value) VALUES (%s, %s)"
 
-        for field , value in data_dict.items():
-            # save there values based on  its types
-            if isinstance(value, str):
-                cursor.execute(admin_text_query, (field, value))
-            elif isinstance(value, int):
-                cursor.execute(admin_int_query, [field, value])
-            elif isinstance(value, float):
-                cursor.execute(admin_float_query, [field, value])
-            elif isinstance(value, bool):
-                cursor.execute(admin_bool_query, [field, value])
+        try:
+            for field , value in data_dict.items():
+                # save there values based on  its types
+                if isinstance(value, str):
+                    cursor.execute(admin_text_query, (field, value))
+                elif isinstance(value, int):
+                    cursor.execute(admin_int_query, (field, value))
+                elif isinstance(value, float):
+                    cursor.execute(admin_float_query, (field, value))
+                elif isinstance(value, bool):
+                    cursor.execute(admin_bool_query, (field, value))
 
-        # save the changes
-        self.connection.commit()
-        cursor.close()
+            # save the changes
+            self.connection.commit()
+            cursor.close()
+
+        except mysql.errors as ex:
+            cursor.close()
+            raise ex
+
 
     def createUser(self, username : str, email : str , password : str) -> int:
 
@@ -169,6 +213,7 @@ class AccessManager:
 
         cursor.execute(auth_query, ("password", ))
         admin_pw = cursor.fetchone()[0]
+
         cursor.close()
         # check whether password is correct or not
         return admin_pw == password
@@ -244,7 +289,7 @@ class AccessManager:
         user_exists_query = f"SELECT * FROM users WHERE {key} = %s LIMIT 1"
 
         cursor.execute(user_exists_query, (value,))
-        if cursor.fetchone() == []:
+        if not cursor.fetchone():
             cursor.close()
             return False
         else:

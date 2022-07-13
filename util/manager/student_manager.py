@@ -62,6 +62,7 @@ class StudentManager:
 
         details["added_at"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+        # process database query
         cursor = self.connection.cursor()
         add_student_query = """INSERT INTO students(username, password, first_name, last_name, address, school, birthday,
                                                     student_contact, parent_contact, sex, added_at)
@@ -85,7 +86,7 @@ class StudentManager:
 
             return False
 
-    def fetchStudentByKey(self, search_query : str, labeled = False, params : tuple = None, limit : int = None) -> list[dict]:
+    def fetchStudentsWithKeys(self, search_query : str, labeled = False, params : tuple = None, limit : int = None) -> list[dict]:
 
         cursor = self.connection.cursor(dictionary=True)
 
@@ -122,12 +123,12 @@ class StudentManager:
         student_search_query = "SELECT * FROM students WHERE first_name LIKE '%{}%' OR last_name LIKE '%{}%' ORDER BY {}".format(
             name, name, order
         )
-        return self.fetchStudentByKey(student_search_query, labeled, limit = limit)
+        return self.fetchStudentsWithKeys(student_search_query, labeled, limit = limit)
 
     def getStudentByUsername(self, username : str, labeled = False, limit : int = None) -> dict:
 
         student_search_query = "SELECT * FROM students WHERE username = %s"
-        std = self.fetchStudentByKey(student_search_query, labeled, params=(username,), limit=limit)
+        std = self.fetchStudentsWithKeys(student_search_query, labeled, params=(username,), limit=limit)
         if std == []:
             return None
         else:
@@ -137,7 +138,7 @@ class StudentManager:
 
         student_query = "SELECT * FROM students WHERE id = %s LIMIT 1"
         try:
-            return self.fetchStudentByKey(student_query, params=(std_id, ))[0]
+            return self.fetchStudentsWithKeys(student_query, params=(std_id,))[0]
         except mysql.Error as ex:
             self.logger.error(location = self.LOCATION, mysql_error = str(ex), content = "try to get student details with invalid student ID")
             return None
@@ -147,14 +148,13 @@ class StudentManager:
         _key = self.getKey(key)
         if _key:
             search_query = "SELECT * FROM students WHERE {} LIKE %s ".format(_key)
-            return self.fetchStudentByKey(search_query, labeled, params=('%{}%'.format(value), ), limit = limit)
-        else:
-            return []
+            return self.fetchStudentsWithKeys(search_query, labeled, params=('%{}%'.format(value),), limit = limit)
+        return []
 
     def getStudents(self, labeled = False, limit : int = None , order = "id") -> list[dict]:
 
         search_query = "SELECT * FROM students ORDER BY %s"
-        return self.fetchStudentByKey(search_query, labeled, params=(order, ), limit = limit)
+        return self.fetchStudentsWithKeys(search_query, labeled, params=(order,), limit = limit)
 
     def getValuesFromKey(self, key : str, order : str = "id", limit : int  = None) -> list:
 
@@ -174,13 +174,16 @@ class StudentManager:
                              result_count = cursor.rowcount)
             # return the one dimension list of values
             return [item[0] for item in result_set]
-        else:
-            return []
+        return []
 
     def updateStudent(self, std_id : int, key : str ,new_value) -> bool:
 
         _key = self.getKey(key)
         std_id = int(std_id)
+        if not self.getStudentById(std_id):
+            self.logger.warning(location = self.LOCATION , content = f"try to update student with invalid student id : {std_id}")
+            return False
+
         if _key:
 
             cursor = self.connection.cursor()
@@ -200,8 +203,7 @@ class StudentManager:
                                   mysql_error = str(ex))
                 return False
 
-        else:
-            return False
+        return False
 
     def isStudentUserExists(self, username : str) -> bool:
 
@@ -227,4 +229,30 @@ class StudentManager:
 
         return result_set
 
+    # static method for use by another modules of the system with shared connection
+    @staticmethod
+    def ensureStudents(connection : mysql.MySQLConnection , std_list: list[int]) -> bool:
 
+        cursor = connection.cursor()
+        check_query = "SELECT id FROM students WHERE id = %s"
+
+        for std_id in std_list:
+            cursor.execute(check_query, (std_id, ))
+            if not cursor.fetchall():
+                cursor.close()
+                return False
+
+        cursor.close()
+        return True
+
+    @staticmethod
+    def getStudentNames(connection : mysql.MySQLConnection , std_list : list[int]) -> list[dict]:
+
+        cursor = connection.cursor(dictionary=True)
+        name_query = "SELECT id, first_name, last_name FROM students WHERE id = %s"
+
+        cursor.executemany(name_query, [(std_id , ) for std_id in std_list])
+        result = cursor.fetchall()
+
+        cursor.close()
+        return result
