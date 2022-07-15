@@ -8,12 +8,13 @@ from util.logger import Logger
 
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QStackedLayout, QErrorMessage, QMessageBox)
 
-from style_sheet.main_style_sheet import main_style_sheet
-
 from panel.system_bootup_panel import BootPanel
 from panel.admin_data_panel import AdminDataPanel
 from panel.login_panel import LoginPanel
 from panel.user_account_panel import UserAccountPanel
+
+from system_entry import SystemPanel
+########################### enf of import statements ############################
 
 # globally defined main connection and access manager instance
 global connection, logger, accessManager
@@ -24,6 +25,7 @@ accessManager = AccessManager(connection)
 # attach the loger to access manager
 accessManager.attachLogger(logger)
 
+######################### end of global variables declaring #####################
 
 class Classer(QMainWindow):
     def __init__(self):
@@ -35,8 +37,7 @@ class Classer(QMainWindow):
 
     def initializeUI(self):
 
-        self.login_panel = None
-        self.user_account_panel = None
+        self.login_panel ,self.user_account_panel, self.system_panel = None, None, None
 
         # create stack layout
         self.stackLayout = QStackedLayout()
@@ -112,7 +113,12 @@ class Classer(QMainWindow):
         self.login_panel.quit_signal.connect(self.close)
 
     def loggedToSystem(self):
-        QMessageBox.information(self, "System Access", "Logged!")
+
+        self.system_panel = SystemPanel(connection, logger, accessManager)
+        self.system_panel.quitSignal.connect(self.close)
+
+        self.stackLayout.addWidget(self.system_panel)
+        self.stackLayout.setCurrentWidget(self.system_panel)
 
     def createUserAccount(self):
 
@@ -133,10 +139,13 @@ class Classer(QMainWindow):
             QApplication.quit()
 
 
-# Press the green button in the gutter to run the script.
+
 if __name__ == '__main__':
    app = QApplication(sys.argv)
-   app.setStyleSheet(main_style_sheet)
+   with open("style_sheet/main.css", "r") as file:
+       style_sheet = file.read()
+
+   app.setStyleSheet(style_sheet)
    window = Classer()
 
    app.exec_()

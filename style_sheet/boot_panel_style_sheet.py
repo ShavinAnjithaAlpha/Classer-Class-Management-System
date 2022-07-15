@@ -2,6 +2,7 @@ style_sheet = """
     
     
     QWidget#main {
+            background-color : white;
             background-image : url(resources/images/wallpaper.jpg);
             background-position : center center;
             background-repeat : no-repeat;
@@ -24,12 +25,13 @@ style_sheet = """
         font-weight : 60;
         color : white;
     }
-    
+
     QLabel#time-label {
         font-size : 170px;
         font-weight : 70;
         color : white;
     }
+
     
     QPushButton#connect-btn {
             border-radius : 25px;

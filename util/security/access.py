@@ -32,7 +32,7 @@ class AccessManager:
                                     start_at DATETIME NOT NULL ,
                                     end_at DATETIME NOT NULL,
             
-                                    FOREIGN KEY (user_id) REFERENCES users(id));
+                                    # FOREIGN KEY (user_id) REFERENCES users(id));
             
             CREATE TABLE events(id INTEGER AUTO_INCREMENT UNIQUE PRIMARY KEY NOT NULL ,
                             session_id INT NOT NULL,

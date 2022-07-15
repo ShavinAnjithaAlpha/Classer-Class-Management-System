@@ -42,7 +42,7 @@ class LoginPanel(QWidget):
         self.time_label.setObjectName("time-label")
         self.date_label = QLabel(QDate.currentDate().toString("dddd, MMM dd"), self.widget)
         self.date_label.setObjectName("date-label")
-        self.time_label.move(30 ,20)
+        self.time_label.move(20 ,20)
         self.date_label.move(20, self.time_label.height() + 170)
 
         # create close button for panel
