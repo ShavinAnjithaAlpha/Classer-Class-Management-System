@@ -116,6 +116,7 @@ class Classer(QMainWindow):
 
         self.system_panel = SystemPanel(connection, logger, accessManager)
         self.system_panel.quitSignal.connect(self.close)
+        self.system_panel.logoutSignal.connect(self.logout)
 
         self.stackLayout.addWidget(self.system_panel)
         self.stackLayout.setCurrentWidget(self.system_panel)
@@ -132,10 +133,20 @@ class Classer(QMainWindow):
         self.user_account_panel.finished_signal.connect(lambda : self.stackLayout.setCurrentWidget(self.login_panel))
         self.user_account_panel.quit_signal.connect(self.close)
 
+    def logout(self):
+
+        self.stackLayout.removeWidget(self.system_panel)
+        self.stackLayout.setCurrentWidget(self.login_panel)
+
+        self.system_panel.deleteLater()
+
     def close(self) -> bool:
 
         if QMessageBox.question(self, "Quit System", "Are you sure to shutdown the system?",
                                 QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes:
+            # end session if session exists
+            if accessManager.session:
+                accessManager.endSession()
             QApplication.quit()
 
 

@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import (QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout)
+from PyQt5.QtWidgets import (QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout)
 from PyQt5.QtCore import Qt, QSize, pyqtSignal
 from PyQt5.QtGui import QPixmap
 
@@ -20,6 +20,7 @@ class LinkButton(QWidget):
         base_widget.setContentsMargins(0, 0, 0, 0)
 
         self.iconLabel = QLabel()
+        self.iconLabel.setContentsMargins(5, 15, 5, 5)
         try:
             if icon:
                 self.iconLabel.setPixmap(
@@ -106,3 +107,40 @@ class SubLinkButton(QWidget):
     def unselect(self):
 
         self.selectMarker.hide()
+
+class CommandLinkButton(QWidget):
+
+    ICON_SIZE =QSize(70, 70)
+
+    def __init__(self, text : str, description : str, icon : str = None, section_id : int = None):
+        super(CommandLinkButton, self).__init__()
+        self.section_id = section_id
+        self.setObjectName("command-link-button")
+
+        textLabel = QLabel(text)
+        textLabel.setObjectName("text")
+
+        desLabel = QLabel(description)
+        desLabel.setWordWrap(True)
+        desLabel.setObjectName("des")
+
+        iconLabel = QLabel()
+        if icon:
+            iconLabel.setPixmap(QPixmap(icon).scaled(self.ICON_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
+        grid = QGridLayout()
+        grid.addWidget(iconLabel, 0, 0, 2, 1, alignment=Qt.AlignCenter)
+        grid.addWidget(textLabel, 0, 1, alignment=Qt.AlignHCenter)
+        grid.addWidget(desLabel, 1, 1, alignment=Qt.AlignLeft)
+
+
+        widget = QWidget()
+        widget.setLayout(grid)
+
+        self.setLayout(QHBoxLayout())
+        self.layout().addWidget(widget)
+        self.setMaximumWidth(300)
+        self.setMinimumHeight(200)
+        self.setMaximumHeight(300)
+
+

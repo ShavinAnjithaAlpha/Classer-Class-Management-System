@@ -1,0 +1,16 @@
+[
+  ["-1", true, false],
+  ["-2", true, false],
+  ["-3", true, false],
+
+  ["0", true, true],
+  ["1", true, false],
+  ["2", true, true],
+  ["3", true, false],
+  ["4", true, true],
+  ["5", true, true],
+  ["0.0", true, true],
+  ["0.1", true, false],
+  ["0.2", true, true],
+  ["0.3", true, true]
+]
