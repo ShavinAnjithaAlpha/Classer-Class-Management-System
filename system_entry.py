@@ -20,6 +20,15 @@ connection : mysql.MySQLConnection = None
 logger : Logger = None
 accessManager : AccessManager = None
 
+LINK_BUTTON_DETAILS = [
+    ("Student Manager", "add new students, update, edit and search/view students", "resources/icons/widget.png"),
+    ("Class Manager", "manage classes, create new class, modify and setup class", "resources/icons/home-white.png"),
+    ("Registers", "start new registers, view registers and search registers", "resources/icons/admin-profile.png"),
+    ("Payments", "manage payments, view payment history and manage it", "resources/icons/user.png"),
+    ("Task Manager", "manage classes, create new class, modify and setup class", "resources/icons/widget.png"),
+    ("Task Manager", "manage classes, create new class, modify and setup class", "resources/icons/widget.png")
+]
+
 class SystemPanel(QWidget):
 
     quitSignal = pyqtSignal()
@@ -34,6 +43,8 @@ class SystemPanel(QWidget):
         # initiate the UI
         self.initializeUI()
 
+
+    # static part of UI
     def initializeUI(self):
 
         # create stack layout
@@ -71,7 +82,6 @@ class SystemPanel(QWidget):
         top_grid = self.createTopIndexPanel()
         # create links layout
         linkScrollArea = self.createLinkLayout()
-
         # create bottom bar of index panel
         bottom_grid = self.createBottomGrid()
 
@@ -86,6 +96,7 @@ class SystemPanel(QWidget):
         self.stackLayout.addWidget(self.indexPanel)
 
     def createTopIndexPanel(self) -> QGridLayout:
+
         self.timeLabel = QLabel(QTime.currentTime().toString("hh:mm"))
         self.dateLabel = QLabel(QDate.currentDate().toString("dddd, MMM dd"))
 
@@ -132,6 +143,7 @@ class SystemPanel(QWidget):
         return top_grid
 
     def createLinkLayout(self) -> QScrollArea:
+
         # create command link section of index panel
         linkScrollArea = QScrollArea()
         linkScrollArea.setObjectName("link-scroll-pane")
@@ -149,8 +161,8 @@ class SystemPanel(QWidget):
         # load the access indexes for main sections
         accessIndex = getAccessIndexes(0)
 
-        for i in range(6):
-            linkButton = LinkButton("Student", "add student, update and viewing ad more", "resources/icons/widget.png", i)
+        for i in range(len(LINK_BUTTON_DETAILS)):
+            linkButton = LinkButton(*LINK_BUTTON_DETAILS[i], i)
             linkButton.clicked_signal.connect(self.addPanel)
             if not checkAccessPreviliage(accessIndex, i, accessManager.session["level"]):
                 linkButton.setDisabled(True)
@@ -197,6 +209,8 @@ class SystemPanel(QWidget):
 
         return grid
 
+
+    # dynamical behavior of UI
     def updateDateAndTime(self):
 
         self.dateLabel.setText(QDate.currentDate().toString("dddd MMM, dd"))
@@ -232,6 +246,8 @@ class SystemPanel(QWidget):
         panel.back_signal.connect(lambda : self.stackLayout.setCurrentWidget(self.indexPanel))
         return panel
 
+
+    # search functionalities
     def isDirectKeyWord(self, keyword : str) -> bool:
 
         # first check keyword in the subsection keywords
@@ -261,7 +277,6 @@ class SystemPanel(QWidget):
 
         return results
 
-
     def searchSections(self, searchBar : QLineEdit):
 
         keyword = searchBar.text()
@@ -276,6 +291,8 @@ class SystemPanel(QWidget):
             self.searchResultPanel.addSearchResults(index_results)
             self.stackLayout.setCurrentWidget(self.searchResultPanel)
 
+
+    # overwrite methods - standard methods
     def keyPressEvent(self, event : QKeyEvent) -> None:
 
         if event.key() == Qt.Key_Backspace:

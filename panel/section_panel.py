@@ -16,8 +16,9 @@ global accessManager, logger, connection
 
 class SectionPanel(QWidget):
 
+    # cordinate constant of widget
     NAVIGATE_LINKS_WIDTH = 400
-
+    # pyqt signals for this widget
     back_signal = pyqtSignal()
 
     def __init__(self, section_id : int ,sub_sections : list, title : str , current_sub_section_id : int = 0, parent = None, * , connection_ = None, access_manager_ = None, logger_ = None):
@@ -36,6 +37,7 @@ class SectionPanel(QWidget):
         self.initializeUI()
         self.setObjectName("section-panel")
 
+    # static part of UI
     def initializeUI(self):
 
         # create stack layout and panel stack dictionary
@@ -135,6 +137,8 @@ class SectionPanel(QWidget):
         vbox.addStretch()
         navigateWidget.setLayout(vbox)
 
+
+    # dynamic part of UI
     def setCurrentLinkButton(self, linkButton : SubLinkButton):
 
         # set the link button market for selected one
@@ -193,6 +197,8 @@ class SectionPanel(QWidget):
         self.animation.setDuration(500)
         self.animation.start()
 
+
+    # search functionalty of UI
     def searchSections(self, *args):
 
         keyword = self.searchBar.text().strip()
