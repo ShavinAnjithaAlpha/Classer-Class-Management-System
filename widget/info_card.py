@@ -4,11 +4,12 @@ from PyQt5.QtCore import Qt, QDate
 import datetime
 
 class InfoCard(QWidget):
-    def __init__(self, rows : int ,details : dict = None, title : str = None):
+    def __init__(self, rows : int ,details : dict = None, title : str = None, placeHolderText : str = None):
         super(InfoCard, self).__init__()
         self.detail = details
         self.rows = rows
         self.title = title
+        self.placeHolderText = placeHolderText
         self.initializeUI()
 
         self.setObjectName("info-card")
@@ -53,6 +54,9 @@ class InfoCard(QWidget):
     def setDetail(self, detail : dict):
 
         if not detail:
+            label = QLabel(self.placeHolderText)
+            self.widgets.append(label)
+            self.gridLayout.addWidget(label, 0, 0, alignment=Qt.AlignCenter)
             return
 
         self.detail = detail

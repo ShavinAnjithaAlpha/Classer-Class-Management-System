@@ -17,7 +17,7 @@ class StudentPanel(SectionPanel):
     title = "Student Manager"
     section_id = 0
 
-    def __init__(self, connection , logger, access_manager, current_sub_section_id : int = 0, parent = None):
+    def __init__(self, connection , logger, access_manager, current_sub_section_id : int = 0 ,parent = None):
         # create student data model instance for this
         self.studentModel = StudentModel(connection, logger)
         super(StudentPanel, self).__init__(self.section_id, self.sections, self.title, current_sub_section_id, parent,
@@ -148,7 +148,7 @@ class StudentPanel(SectionPanel):
         searchOptionGroup.setLayout(grid)
 
         # create student details card
-        self.selectedStudentCard = InfoCard(4)
+        self.selectedStudentCard = InfoCard(4, title="Selected Student", placeHolderText="No Student")
 
         vbox = QVBoxLayout()
         vbox.addWidget(titleLabel)

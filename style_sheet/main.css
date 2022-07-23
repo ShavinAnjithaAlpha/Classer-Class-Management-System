@@ -130,8 +130,34 @@ QDateEdit {padding : 7px;
         font-size : 16px;}
 
 QRadioButton , QCheckBox {
-                            padding : 5px;
-                            margin : 5px;}
+            padding : 5px;
+            margin : 5px;}
+
+QRadioButton::indicator {
+    width : 20px;
+    height : 20px;
+}
+
+QRadioButton::indicator:checked {
+    image : url(resources/icons/radio-checked.png);
+}
+
+QRadioButton::indicator:!checked {
+    image : url(resources/icons/radio-unchecked.png);
+}
+
+QCheckBox::indicator {
+    width : 25px;
+    height : 25px;
+}
+
+QCheckBox::indicator:checked {
+    image : url(resources/icons/checked.png);
+}
+
+QCheckBox::indicator:!checked {
+    image : url(resources/icons/unchecked.png);
+}
 
 QComboBox {padding  : 7px;
     border : 1px solid blue;
@@ -139,23 +165,41 @@ QComboBox {padding  : 7px;
     border-radius : 4px;}
 
 QComboBox::drop-down {background : none;
-    border : none;}
+                        border : none;}
 
-QComboBox::down-arrow {background : none;
-    border : none;}
+QComboBox::down-arrow {image : url(resources/icons/down-arrow.png);
+                        width : 18px;
+                        height : 18px;
+                        margin-right: 15px}
 
-QComboBox QAbstractItemView {font-size : 17px;
-                            background-color  :white;
-                            padding : 7px;
-                            border-radius : 4px;}
+QComboBox:on {
+    border: 2px solid blue;
+}
 
-QComboBox QAbstractItemView:item {border-bottom : 1px solid blue;
-                                    padding-bottom : 5px;
-                                    border-radius : 4px;}
+QComboBox QListView {
+    background-color: white;
+    border-radius: 5px;
+    font-size: 23px;
+    border : 1px solid rgba(0, 0, 0, 0.17);
+    padding : 5px;
+    outline : 0px;
+}
 
-QComboBox QAbstractItemView:text {border : 1px solid black;}
+QComboBox QListView:item {
+    padding: 5px 7px 5px 8px;
+    margin: 7px;
+    border: none;
+}
 
+QComboBox QListView:item:hover {
+    background-color: blue;
+    color: rgba(255, 255, 255, 0.9);
+}
 
+QComboBox QListView:item:selected {
+    background-color: blue;
+    color: rgba(255, 255, 255, 0.9);
+}
 
 
 QSpinBox , QDoubleSpinBox {font-size : 16px;
@@ -193,12 +237,13 @@ QMessageBox QPushButton[text='No'] {
 
 QHeaderView::section {background-color : rgb(0, 50, 250);
                         border : none;
-                        color : rgba(255, 255, 255, 0.7);
+                        color : rgba(255, 255, 255, 0.9);
                         border-right : 1px solid rgb(0, 200, 250);
                         border-bottom : 1px solid blue;
                         padding : 5px;}
 
-QHeaderView::section:selected {font-weight  :bold;}
+QHeaderView::section:selected {font-weight  :bold;
+                                background-color: rgb(0, 0, 250);}
 
 QTableView::section {background-color : orange;}
 
@@ -219,13 +264,16 @@ QListView::item:selected {background-color : blue;
 QListView QCheckBox::indicator {min-width : 20px;
                                 min-height : 20px;}
 
-QTableView {selection-background-color: rgb(0, 0, 150);
-        font-size : 16px;
-        padding : 5px;}
+QTableView {selection-background-color: rgb(0, 0, 200);
+                font-size : 17px;
+                padding : 7px;}
 
 QScrollArea {
     border : none;
-    background-color: antiquewhite;
+}
+
+QCompleter {
+    font-size: 22px;
 }
 
 QCompleter  QListView {
@@ -517,6 +565,7 @@ QWidget#info-card QWidgt#base {
     border-radius: 8px;
     padding: 15px;
     margin: 10px;
+    border: 1px solid rgba(0, 0, 255, 0.2);
 }
 
 QWidget#info-card QLineEdit#value-field {
@@ -527,6 +576,6 @@ QWidget#info-card QLineEdit#value-field {
 }
 
 QWidget#info-card QLabel#title {
-    font-size: 25px;
-    font-weight: 200;
+    font-size: 28px;
+    font-weight: 300;
 }
