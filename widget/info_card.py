@@ -74,6 +74,7 @@ class InfoCard(QWidget):
             valueField.setObjectName("value-field")
 
             keyLabel = QLabel(key)
+            keyLabel.setObjectName("key-label")
             self.widgets.extend((valueField, keyLabel))
 
             self.gridLayout.addWidget(keyLabel, i % self.rows, i // self.rows * 2)

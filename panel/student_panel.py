@@ -9,7 +9,7 @@ from model.student_model import StudentModel
 from panel.section_panel import SectionPanel
 from panel.add_student_panel import StudentAddPanel
 
-from widget.info_card import InfoCard
+from widget.StudentCard import StudentCard
 
 class StudentPanel(SectionPanel):
 
@@ -148,7 +148,7 @@ class StudentPanel(SectionPanel):
         searchOptionGroup.setLayout(grid)
 
         # create student details card
-        self.selectedStudentCard = InfoCard(4, title="Selected Student", placeHolderText="No Student")
+        self.selectedStudentCard = StudentCard(4, title="Selected Student", placeHolderText="No Student")
 
         vbox = QVBoxLayout()
         vbox.addWidget(titleLabel)

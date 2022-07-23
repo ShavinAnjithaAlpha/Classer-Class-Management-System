@@ -578,4 +578,32 @@ QWidget#info-card QLineEdit#value-field {
 QWidget#info-card QLabel#title {
     font-size: 28px;
     font-weight: 300;
+    border-bottom: 3px solid rgba(0, 0, 255, 0.5);
+}
+
+QWidget#info-card QLabel#profile-label {
+    background-color: blue;
+    padding: 16px;
+    font-size: 30px;
+    max-width: 50px;
+    max-height: 50px;
+    min-width: 50px;
+    min-height: 50px;
+    border-radius: 40px;
+    border : none;
+    color: white;
+}
+
+QWidget#info-card QLabel#name-label {
+    font-size: 28px;
+    font-weight: 500;
+}
+
+QWidget#info-card QLabel#user-label {
+    color: rgba(0, 0, 255, 0.5);
+    font-style: italic;
+}
+
+QWidget#info-card QLabel#key-label {
+    color: rgba(0, 0, 0, 0.7);
 }
