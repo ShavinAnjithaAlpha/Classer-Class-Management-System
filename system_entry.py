@@ -1,6 +1,6 @@
 import mysql.connector as mysql
 import json5, os
-from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QGridLayout, QStackedWidget, QHBoxLayout,
+from PyQt5.QtWidgets import (QWidget, QLabel, QPushButton, QVBoxLayout, QGridLayout, QStackedWidget, QHBoxLayout,
                              QCheckBox, QStackedLayout, QLineEdit, QScrollArea, QCompleter, QMessageBox)
 from PyQt5.QtCore import Qt,QSize, QDate, QTime, QTimer, pyqtSignal
 from PyQt5.QtGui import QKeyEvent, QPixmap, QIcon
@@ -11,6 +11,7 @@ from util.security.access import AccessManager
 from widget.link_button import LinkButton, CommandLinkButton
 from panel.section_panel import SectionPanel
 from panel.search_result_panel import SearchResultPanel
+from panel.student_panel import StudentPanel
 
 from SECTION_INDEXES import SUB_SECTION_INDEXES, KEYWORDS_MAP
 from util.common_functions import getAccessIndexes, checkAccessPreviliage
@@ -236,10 +237,11 @@ class SystemPanel(QWidget):
     def createPanel(self, section_id : int, sub_section_id : int) -> QWidget:
 
         if section_id == 0:
-            panel = SectionPanel(section_id, ["Add Student", "Student Table", "Student Search"], "Student Manager", sub_section_id,
-                                 parent=self, access_manager_= accessManager)
+            panel = StudentPanel(connection, logger, accessManager, sub_section_id, self)
         elif section_id == 1:
-            return QLabel("Class", parent=self)
+            panel = SectionPanel(section_id, ["Add Class", "Student Table", "Student Search"], "Student Manager",
+                                 sub_section_id,
+                                 parent=self, access_manager_=accessManager)
         else:
             return QLabel("Register", parent=self)
 
@@ -297,6 +299,9 @@ class SystemPanel(QWidget):
 
         if event.key() == Qt.Key_Backspace:
             self.stackLayout.setCurrentWidget(self.indexPanel)
+        elif event.key() == Qt.Key_Escape:
+            self.close()
+
 
     def close(self) -> bool:
 

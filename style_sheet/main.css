@@ -1,29 +1,32 @@
 QWidget {font-family : Arial;
-        font-weight : 18px;}
+        font-weight : normal;
+        font-size: 16px}
 
 QWidget#main {
     background-image: url(resources/images/wallpaper_blur.jpg);
 }
 
+
+
 /**************************** button styling ***************/
 /***********************************************************/
 
 QPushButton {background-color :blue;
-                            color  : white;
-                            border : 1px solid rgb(0, 0, 200);
-                            font-size : 18px;
-                            padding : 15px;
-                            border-radius : 5px;
-                            widget-animation-duration : 800ms;
-                            button-layout : 2;
-                            }
+            color  : white;
+            border : 1px solid rgb(0, 0, 200);
+            font-size : 18px;
+            padding : 10px 15px 10px 15px;
+            border-radius : 5px;
+            widget-animation-duration : 800ms;
+            button-layout : 2;
+            }
 
 QPushButton:focus {border : 2px solid rgb(0, 100, 200);}
 
 QPushButton:hover {background-color : rgb(0, 0, 200)}
 
 QPushButton:pressed {background-color : rgb(0, 0 ,150);
-                                    color : rgb(150, 150, 150)}
+                    color : rgb(150, 150, 150)}
 
 QPushButton:disabled {background-color : rgb(0, 0, 130)}
 
@@ -113,41 +116,42 @@ QLineEdit {background-color  : white;
                             padding : 7px;
                             font-size : 18px;
                             border : 1px solid rgb(150, 150, 150);
-                            border-radius : 5px;}
+                            border-radius : 4px;}
 
 QLineEdit:hover {color : rgb(50, 50, 50);
-                                border-color  :rgb(0, 0, 200);}
+                border-color  :rgb(0, 0, 200);
+                }
 
 QLineEdit:focus {border : 2px solid blue;
-                                background-color  : rgba(255, 255, 255);}
+                background-color  : rgba(255, 255, 255);
+                }
 
 QDateEdit {padding : 7px;
-                            font-size : 16px;}
+        font-size : 16px;}
 
-QRadioButton , QCheckBox {font-size : 15px;
-                                padding : 5px;
-                                margin : 5px;}
+QRadioButton , QCheckBox {
+                            padding : 5px;
+                            margin : 5px;}
 
 QComboBox {padding  : 7px;
-    font-size : 18px;
     border : 1px solid blue;
     padding : 5px;
-    border-radius : 5px;}
+    border-radius : 4px;}
 
 QComboBox::drop-down {background : none;
-                                    border : none;}
+    border : none;}
 
 QComboBox::down-arrow {background : none;
-                                        border : none;}
+    border : none;}
 
 QComboBox QAbstractItemView {font-size : 17px;
                             background-color  :white;
                             padding : 7px;
-                            border-radius : 5px;}
+                            border-radius : 4px;}
 
 QComboBox QAbstractItemView:item {border-bottom : 1px solid blue;
                                     padding-bottom : 5px;
-                                    border-radius : 5px;}
+                                    border-radius : 4px;}
 
 QComboBox QAbstractItemView:text {border : 1px solid black;}
 
@@ -155,7 +159,7 @@ QComboBox QAbstractItemView:text {border : 1px solid black;}
 
 
 QSpinBox , QDoubleSpinBox {font-size : 16px;
-                                            padding : 7px;}
+                            padding : 7px;}
 
 QListWidgetItem {font-size : 16px;
                 border-radius : 3px;}
@@ -173,13 +177,13 @@ QDialog QPushButton[text='No'] {
                         border : none;}
 
 QDialog QLabel {font-size : 16px;
-                            color : black;}
+                color : black;}
 
 QInputDialog QLineEdit {min-width : 300px;
-                                        padding : 5px;}
+                        padding : 5px;}
 
 QMessageBox QLabel {font-size : 17px;
-                                    color : black}
+                    color : black}
 
 QMessageBox QPushButton {width : 100px;}
 
@@ -187,12 +191,12 @@ QMessageBox QPushButton[text='No'] {
                         background-color : red;
                         border : none;}
 
-QHeaderView::section {background-color : rgb(0, 100, 250);
-                                    border : none;
-                                    color : white;
-                                    border-right : 1px solid rgb(0, 200, 250);
-                                    border-bottom : 1px solid blue;
-                                    padding : 5px;}
+QHeaderView::section {background-color : rgb(0, 50, 250);
+                        border : none;
+                        color : rgba(255, 255, 255, 0.7);
+                        border-right : 1px solid rgb(0, 200, 250);
+                        border-bottom : 1px solid blue;
+                        padding : 5px;}
 
 QHeaderView::section:selected {font-weight  :bold;}
 
@@ -480,4 +484,49 @@ QPushButton#home {
 
 QPushButton#home:hover {
     background-color: rgba(0, 0, 255, 0.7);
+}
+
+/******************************* add student panel ***************************/
+QWidget#add-student-panel QLabel#title {
+    font-size: 70px;
+    color: black;
+}
+
+QWidget#add-student-panel QLabel#static-label {
+    font-size: 23px;
+}
+
+QWidget#add-student-panel QLabel#field-label {
+    font-size: 20px;
+}
+
+QWidget#add-student-panel QLabel#id-label {
+    font-size: 25px;
+    color: midnightblue;
+}
+
+/******************************* student panel styling ****************************/
+QWidget#student-panel QLabel#title {
+    color: black;
+    font-size: 70px;
+}
+
+
+/******************************* Info Card ***************************************/
+QWidget#info-card QWidgt#base {
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px;
+}
+
+QWidget#info-card QLineEdit#value-field {
+    font-size: 18px;
+    background-color: rgba(0, 0, 0, 0.0);
+    border: none;
+    color: black;
+}
+
+QWidget#info-card QLabel#title {
+    font-size: 25px;
+    font-weight: 200;
 }

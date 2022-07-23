@@ -1,12 +1,11 @@
-from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QGridLayout, QStackedWidget, QHBoxLayout,
-                             QCheckBox, QStackedLayout, QLineEdit, QScrollArea, QCompleter)
-from PyQt5.QtCore import Qt,QSize, QDate, QTime, QTimer, pyqtSignal, QPropertyAnimation, QEasingCurve
+from PyQt5.QtWidgets import (QWidget, QLabel, QPushButton, QVBoxLayout, QGridLayout, QStackedWidget, QHBoxLayout,
+                              QLineEdit, QScrollArea, QCompleter)
+from PyQt5.QtCore import Qt, pyqtSignal, QPropertyAnimation, QEasingCurve
 from PyQt5.QtGui import QIcon
 
 from widget.link_button import SubLinkButton
 
 from SECTION_INDEXES import SUB_SECTION_INDEXES
-from panel.search_result_panel import SearchResultPanel
 
 from util.common_functions import getAccessIndexes, checkAccessPreviliage
 
@@ -16,7 +15,7 @@ global accessManager, logger, connection
 
 class SectionPanel(QWidget):
 
-    # cordinate constant of widget
+    # size constant of widget
     NAVIGATE_LINKS_WIDTH = 400
     # pyqt signals for this widget
     back_signal = pyqtSignal()
@@ -24,7 +23,7 @@ class SectionPanel(QWidget):
     def __init__(self, section_id : int ,sub_sections : list, title : str , current_sub_section_id : int = 0, parent = None, * , connection_ = None, access_manager_ = None, logger_ = None):
         super(SectionPanel, self).__init__()
         self.current_sub_section_id = current_sub_section_id
-        self.scetion_id = section_id
+        self.section_id = section_id
         self.sub_sections = sub_sections
         self.title = title
         self.parent = parent
@@ -83,7 +82,6 @@ class SectionPanel(QWidget):
         self.stackWidget.setContentsMargins(0, 0, 0, 0)
         # set current widget
         self.setCurrentPanel(self.current_sub_section_id, self.navigateButtons[self.current_sub_section_id])
-
         # create h box
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0, 0, 0, 0)
@@ -122,7 +120,7 @@ class SectionPanel(QWidget):
         vbox.addSpacing(35)
 
         # get access privileged indexes
-        accessIndexes = getAccessIndexes(1, self.scetion_id)
+        accessIndexes = getAccessIndexes(1, self.section_id)
 
         for i, section in enumerate(self.sub_sections):
             linkButton = SubLinkButton(section, i)

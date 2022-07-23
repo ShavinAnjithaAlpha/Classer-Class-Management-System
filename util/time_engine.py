@@ -27,8 +27,6 @@ class DateTimeUtil:
         new_min = min(new_time1, new_time2)
         new_max = max(new_time1, new_time2)
 
-        print(type(ex_time1), type(ex_time2), type(new_time1), type(new_time2))
-
         if (new_max < max_time and new_max > min_time):
             return True
         if (new_min > min_time and new_min < max_time):

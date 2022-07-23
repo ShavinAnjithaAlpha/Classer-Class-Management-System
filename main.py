@@ -7,6 +7,8 @@ from util.security.access import AccessManager
 from util.logger import Logger
 
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QStackedLayout, QErrorMessage, QMessageBox)
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QKeyEvent
 
 from panel.system_bootup_panel import BootPanel
 from panel.admin_data_panel import AdminDataPanel
@@ -149,7 +151,10 @@ class Classer(QMainWindow):
                 accessManager.endSession()
             QApplication.quit()
 
+    def keyPressEvent(self, event : QKeyEvent) -> None:
 
+        if event.key() == Qt.Key_Escape:
+            self.close()
 
 if __name__ == '__main__':
    app = QApplication(sys.argv)

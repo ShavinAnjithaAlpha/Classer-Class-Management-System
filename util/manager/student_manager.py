@@ -52,7 +52,7 @@ class StudentManager:
         self.connection = connection
         self.logger = logger
 
-    def addStudent(self, details : dict) -> bool:
+    def addStudent(self, details : dict) -> int:
 
         # update the details dictionary
         _details = {}
@@ -78,13 +78,13 @@ class StudentManager:
             self.logger.event(location = self.LOCATION ,content = "student added to database" , student_id = std_id,
                               student_name = f"{details['first_name']} {details['last_name']}")
 
-            return True
+            return std_id
         except mysql.Error as ex:
             cursor.close()
             # log error
             self.logger.error(location = self.LOCATION ,mysql_error = str(ex), content = "student add unsuccessful")
 
-            return False
+            raise ex
 
     def fetchStudentsWithKeys(self, search_query : str, labeled = False, params : tuple = None, limit : int = None) -> list[dict]:
 
@@ -229,6 +229,73 @@ class StudentManager:
 
         return result_set
 
+    def count(self, count_query : str) -> int:
+
+        cursor = self.connection.cursor()
+
+        cursor.execute(count_query)
+        count = cursor.fetchone()[0]
+        cursor.close()
+
+        return count
+
+    def studentCount(self) -> int:
+        """
+
+        :return: total student count of database
+        """
+        return self.count("SELECT COUNT(id) FROM students")
+
+    def lastMonthStudentCount(self) -> int:
+        """
+
+        :return: total number of students those register in last month
+        """
+        today = datetime.datetime.now().strftime("%Y-%m-")
+        return self.count(f"SELECT COUNT(id) FROM students WHERE added_at LIKE '{today}%' ")
+
+    def lastDayStudentCount(self) -> int:
+        """
+
+        :return: total number of student those registered today
+        """
+
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
+        return self.count(f"SELECT COUNT(id) FROM students WHERE added_at LIKE '{today}%' ")
+
+    def getResult(self, query : str) -> list:
+
+        cursor = self.connection.cursor()
+        cursor.execute(query)
+
+        result = cursor.fetchall()
+        cursor.close()
+        return result
+
+    def countByDate(self, date : datetime.datetime):
+
+        return self.count(f"SELECT COUNT(id) FROM students WHERE added_at LIKE f'{date.strftime('%Y-%m-%d')}%' ")
+
+    def lastYear(self, option : str = "day") -> list:
+
+        if option == "day":
+            return self.getResult("SELECT COUNT(id) , CAST(added_at AS DATE) FROM students WHERE YEAR(added_at) = YEAR(CURRENT_DATE) GROUP BY CAST(added_at AS DATE )")
+        else:
+            return self.getResult("SELECT COUNT(id) , MONTH(added_at), YEAR(added_at) FROM students WHERE YEAR(added_at) = YEAR(CURRENT_DATE) GROUP BY CAST(added_at AS DATE )")
+
+
+    def lastMonth(self) -> list:
+
+        return self.getResult("SELECT COUNT(id) , CAST(added_at AS DATE) FROM students WHERE MONTH(added_at) = MONTH(CURRENT_DATE) GROUP BY CAST(added_at AS DATE )")
+
+    def countByGroup(self, option : str = "day") -> list:
+
+        if option == "day":
+            return self.getResult("SELECT COUNT(id) , CAST(added_at AS DATE) FROM students GROUP BY CAST(added_at AS DATE)")
+        else:
+            return self.getResult("SELECT COUNT(id) , MONTH(added_at), YEAR(added_at) FROM students GROUP BY CAST(added_at AS DATE)")
+
+
     # static method for use by another modules of the system with shared connection
     @staticmethod
     def ensureStudents(connection : mysql.MySQLConnection , std_list: list[int]) -> bool:
@@ -256,3 +323,5 @@ class StudentManager:
 
         cursor.close()
         return result
+
+
