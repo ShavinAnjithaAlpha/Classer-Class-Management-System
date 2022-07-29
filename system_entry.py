@@ -1,8 +1,9 @@
 import mysql.connector as mysql
 import json5, os
 from PyQt5.QtWidgets import (QWidget, QLabel, QPushButton, QVBoxLayout, QGridLayout, QStackedWidget, QHBoxLayout,
-                             QCheckBox, QStackedLayout, QLineEdit, QScrollArea, QCompleter, QMessageBox)
-from PyQt5.QtCore import Qt, QSize, QDate, QTime, QTimer, pyqtSignal
+                             QCheckBox, QStackedLayout, QLineEdit, QScrollArea, QCompleter, QMessageBox, QDialog,
+                             QListWidget, QListWidgetItem)
+from PyQt5.QtCore import Qt, QSize, QDate, QTime, QTimer, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QKeyEvent, QPixmap, QIcon
 
 from util.logger import Logger
@@ -13,7 +14,7 @@ from panel.section_panel import SectionPanel
 from panel.search_result_panel import SearchResultPanel
 from panel.student_panel import StudentPanel
 
-from SECTION_INDEXES import SUB_SECTION_INDEXES, KEYWORDS_MAP
+from SECTION_INDEXES import SUB_SECTION_INDEXES, KEYWORDS_MAP, SECTION_INDEXES
 from util.common_functions import getAccessIndexes, checkAccessPreviliage
 
 ####################### end of import files ##########################
@@ -166,6 +167,7 @@ class SystemPanel(QWidget):
         for i in range(len(LINK_BUTTON_DETAILS)):
             linkButton = LinkButton(*LINK_BUTTON_DETAILS[i], i)
             linkButton.clicked_signal.connect(self.addPanel)
+            # set access priviliage settings to link
             if not checkAccessPreviliage(accessIndex, i, accessManager.session["level"]):
                 linkButton.setDisabled(True)
 
@@ -210,6 +212,7 @@ class SystemPanel(QWidget):
         return grid
 
     # dynamical behavior of UI
+    @pyqtSlot()
     def updateDateAndTime(self):
 
         self.dateLabel.setText(QDate.currentDate().toString("dddd MMM, dd"))
@@ -220,8 +223,11 @@ class SystemPanel(QWidget):
         if section_id in self.panelStack.keys():
             self.stackLayout.setCurrentIndex(self.panelStack.get(section_id, 0))
             # set subsection - updated
-            self.stackLayout.currentWidget().displayPanel(sub_section_id)
-            self.stackLayout.currentWidget().setCurrentLinkButtonByIndex(sub_section_id)
+            try:
+                self.stackLayout.currentWidget().displayPanel(sub_section_id)
+                self.stackLayout.currentWidget().setCurrentLinkButtonByIndex(sub_section_id)
+            except:
+                pass
         else:
             # create instance of panel that matches to section id that pass to method
             panel = self.createPanel(section_id, sub_section_id)
@@ -241,9 +247,12 @@ class SystemPanel(QWidget):
                                  sub_section_id,
                                  parent=self, access_manager_=accessManager)
         else:
-            return QLabel("Register", parent=self)
+            return QLabel(SECTION_INDEXES[section_id], parent=self)
 
-        panel.back_signal.connect(lambda: self.stackLayout.setCurrentWidget(self.indexPanel))
+        try:
+            panel.back_signal.connect(lambda: self.stackLayout.setCurrentWidget(self.indexPanel))
+        except:
+            pass
         return panel
 
     # search functionalities
@@ -290,6 +299,65 @@ class SystemPanel(QWidget):
             self.searchResultPanel.addSearchResults(index_results)
             self.stackLayout.setCurrentWidget(self.searchResultPanel)
 
+    def openRecentPanels(self):
+
+        def closeDialog(event : QKeyEvent):
+            if event.key() == Qt.Key_Escape:
+                panelDialog.close()
+                panelDialog.deleteLater()
+
+        def searchRecent():
+            text = searchBar.text()
+            for i in range(listWidget.count()):
+                item = listWidget.item(i)
+                if text.lower() in item.text().lower():
+                    item.setHidden(False)
+                else:
+                    item.setHidden(True)
+
+        # create dialog window for show panel list
+        panelDialog = QDialog(self)
+        panelDialog.setModal(True)
+        panelDialog.setWindowFlag(Qt.WindowStaysOnTopHint, True)
+        panelDialog.resize(600, 600)
+        panelDialog.keyPressEvent = closeDialog
+
+
+        # create panel list
+        listWidget = QListWidget()
+        listWidget.addItems(list(map(lambda e : SECTION_INDEXES[e], self.panelStack.keys())))
+        listWidget.itemClicked.connect(lambda e, d = panelDialog : self.jumpToPanel(e, d))
+
+        searchBar = QLineEdit()
+        searchBar.setPlaceholderText("search recent")
+        searchBar.resize(500, 30)
+        searchBar.setClearButtonEnabled(True)
+        searchBar.textChanged.connect(searchRecent)
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(searchBar)
+        vbox.addWidget(listWidget)
+        panelDialog.setLayout(vbox)
+
+        panelDialog.show()
+        panelDialog.exec_()
+
+    def jumpToPanel(self, listItem : QListWidgetItem, dialog : QDialog):
+
+        # extract the text
+        panelIndex = None
+        panelText = listItem.text()
+        for i in SECTION_INDEXES.keys():
+            if SECTION_INDEXES[i] == panelText:
+                panelIndex = i
+                break
+
+
+        self.addPanel(i)
+        # close the panel dialog
+        dialog.close()
+        dialog.deleteLater()
+
     # overwrite methods - standard methods
     def keyPressEvent(self, event: QKeyEvent) -> None:
 
@@ -297,6 +365,8 @@ class SystemPanel(QWidget):
             self.stackLayout.setCurrentWidget(self.indexPanel)
         elif event.key() == Qt.Key_Escape:
             self.close()
+        elif event.key() == Qt.Key_R:
+            self.openRecentPanels()
 
     def close(self) -> bool:
 
