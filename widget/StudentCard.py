@@ -1,31 +1,34 @@
-from PyQt5.QtWidgets import QWidget, QLineEdit, QGridLayout,QLabel, QSizePolicy,QVBoxLayout, QFormLayout, QHBoxLayout, QScrollArea
+from PyQt5.QtWidgets import QWidget, QLineEdit, QGridLayout, QLabel, QSizePolicy, QVBoxLayout, QFormLayout, QHBoxLayout, \
+    QScrollArea
 from PyQt5.QtCore import Qt, QDate
 
 from widget.info_card import InfoCard
 
 import datetime
 
+
 class StudentCard(InfoCard):
 
-    def setDetail(self, detail : dict):
+    def setDetail(self, detail: dict):
 
         if not detail:
             label = QLabel(self.placeHolderText)
-            self.gridLayout.addWidget(label, 0, 0 ,alignment=Qt.AlignCenter)
+            self.gridLayout.addWidget(label, 0, 0, alignment=Qt.AlignCenter)
             self.widgets.append(label)
             return
 
-        self.detail = detail
+        self.detail = detail.copy()
         [w.deleteLater() for w in self.widgets]
         self.widgets.clear()
 
-        iconLabel = QLabel(f"{self.detail['First Name'][0]}{self.detail['Last Name']}".upper())
+        iconLabel = QLabel(f"{self.detail['First Name'][0]}{self.detail['Last Name'][0]}".upper())
         iconLabel.setObjectName("profile-label")
 
         nameLabel = QLabel(f"{self.detail['First Name']} {self.detail['Last Name']}")
         nameLabel.setObjectName("name-label")
 
-        idLabel = QLabel(f"ID {self.detail['Student ID']}")
+        idLabel = QLabel(f"Index No. {self.detail['Student ID']}")
+        idLabel.setObjectName("id-label")
         userNameLabel = QLabel(f"@{self.detail['Username']}")
         userNameLabel.setObjectName("user-label")
 
@@ -35,13 +38,14 @@ class StudentCard(InfoCard):
             self.detail.pop(key)
 
         self.gridLayout.setVerticalSpacing(5)
+        self.gridLayout.setContentsMargins(20, 10, 10, 10)
         self.gridLayout.addWidget(iconLabel, 0, 0)
-        self.gridLayout.addWidget(nameLabel, 0 ,1)
+        self.gridLayout.addWidget(nameLabel, 0, 1)
         self.gridLayout.addWidget(userNameLabel, 1, 1, alignment=Qt.AlignTop)
-        self.gridLayout.addWidget(idLabel, 0, 3)
+        self.gridLayout.addWidget(idLabel, 0, 3, alignment=Qt.AlignRight | Qt.AlignTop)
 
         subGrid = QGridLayout()
-        self.gridLayout.addLayout(subGrid, 2, 0, 1, 4)
+        self.gridLayout.addLayout(subGrid, 3, 0, 1, 4)
 
         i = 0
         for key, value in self.detail.items():

@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (QWidget, QLabel, QPushButton, QVBoxLayout, QGridLayout, QStackedWidget, QHBoxLayout,
-                              QLineEdit, QScrollArea, QCompleter)
+                             QLineEdit, QScrollArea, QCompleter)
 from PyQt5.QtCore import Qt, pyqtSignal, QPropertyAnimation, QEasingCurve
 from PyQt5.QtGui import QIcon
 
@@ -9,18 +9,18 @@ from SECTION_INDEXES import SUB_SECTION_INDEXES
 
 from util.common_functions import getAccessIndexes, checkAccessPreviliage
 
-
 ################### end of import section ###################
 global accessManager, logger, connection
 
-class SectionPanel(QWidget):
 
+class SectionPanel(QWidget):
     # size constant of widget
     NAVIGATE_LINKS_WIDTH = 400
     # pyqt signals for this widget
     back_signal = pyqtSignal()
 
-    def __init__(self, section_id : int ,sub_sections : list, title : str , current_sub_section_id : int = 0, parent = None, * , connection_ = None, access_manager_ = None, logger_ = None):
+    def __init__(self, section_id: int, sub_sections: list, title: str, current_sub_section_id: int = 0, parent=None, *,
+                 connection_=None, access_manager_=None, logger_=None):
         super(SectionPanel, self).__init__()
         self.current_sub_section_id = current_sub_section_id
         self.section_id = section_id
@@ -55,12 +55,12 @@ class SectionPanel(QWidget):
         back_button = QPushButton()
         back_button.setIcon(QIcon("resources/icons/back.png"))
         back_button.setObjectName("show-button")
-        back_button.pressed.connect(lambda : self.back_signal.emit())
+        back_button.pressed.connect(lambda: self.back_signal.emit())
 
         homeButton = QPushButton()
         homeButton.setIcon(QIcon("resources/icons/home-white.png"))
         homeButton.setObjectName("show-button")
-        homeButton.pressed.connect(lambda : self.parent.stackLayout.setCurrentWidget(self.parent.indexPanel))
+        homeButton.pressed.connect(lambda: self.parent.stackLayout.setCurrentWidget(self.parent.indexPanel))
 
         vbox = QVBoxLayout()
         vbox.setContentsMargins(0, 0, 0, 0)
@@ -90,10 +90,9 @@ class SectionPanel(QWidget):
         hbox.addWidget(self.navigationWidget)
         hbox.addWidget(self.stackWidget)
 
-
         self.setLayout(hbox)
 
-    def setUpNavigates(self, navigateWidget : QWidget):
+    def setUpNavigates(self, navigateWidget: QWidget):
 
         navigateWidget.setMaximumWidth(self.NAVIGATE_LINKS_WIDTH)
         self.navigateButtons = []
@@ -125,7 +124,7 @@ class SectionPanel(QWidget):
         for i, section in enumerate(self.sub_sections):
             linkButton = SubLinkButton(section, i)
             self.navigateButtons.append(linkButton)
-            linkButton.clicked_signal.connect(lambda i, e = linkButton : self.setCurrentPanel(i, e))
+            linkButton.clicked_signal.connect(lambda i, e=linkButton: self.setCurrentPanel(i, e))
             vbox.addWidget(linkButton)
 
             # set disables or enables
@@ -135,9 +134,8 @@ class SectionPanel(QWidget):
         vbox.addStretch()
         navigateWidget.setLayout(vbox)
 
-
     # dynamic part of UI
-    def setCurrentLinkButton(self, linkButton : SubLinkButton):
+    def setCurrentLinkButton(self, linkButton: SubLinkButton):
 
         # set the link button market for selected one
         for button in self.navigateButtons:
@@ -146,17 +144,17 @@ class SectionPanel(QWidget):
             else:
                 button.unselect()
 
-    def setCurrentLinkButtonByIndex(self, index : int):
+    def setCurrentLinkButtonByIndex(self, index: int):
 
         linkButton = self.navigateButtons[index]
         self.setCurrentLinkButton(linkButton)
 
-    def setCurrentPanel(self,  panel_id : int, linkButton : SubLinkButton):
+    def setCurrentPanel(self, panel_id: int, linkButton: SubLinkButton):
 
         self.setCurrentLinkButton(linkButton)
         self.displayPanel(panel_id)
 
-    def displayPanel(self, panel_id : int):
+    def displayPanel(self, panel_id: int):
 
         if panel_id in self.panelStack.keys():
             self.stackWidget.setCurrentIndex(self.panelStack.get(panel_id, 0))
@@ -172,7 +170,7 @@ class SectionPanel(QWidget):
             # add to panel stack
             self.panelStack[panel_id] = self.stackWidget.currentIndex()
 
-    def createSubPanel(self, panel_id : int):
+    def createSubPanel(self, panel_id: int):
 
         if panel_id == 0:
             return QLabel("Panel 1")
@@ -194,7 +192,6 @@ class SectionPanel(QWidget):
         self.animation.setEasingCurve(QEasingCurve.OutCubic)
         self.animation.setDuration(500)
         self.animation.start()
-
 
     # search functionalty of UI
     def searchSections(self, *args):

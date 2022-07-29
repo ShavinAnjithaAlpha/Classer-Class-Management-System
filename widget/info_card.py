@@ -1,15 +1,19 @@
-from PyQt5.QtWidgets import QWidget, QLineEdit, QGridLayout,QLabel, QSizePolicy,QVBoxLayout, QFormLayout, QHBoxLayout, QScrollArea
+from PyQt5.QtWidgets import QWidget, QLineEdit, QGridLayout, QLabel, QSizePolicy, QVBoxLayout, QFormLayout, QHBoxLayout, \
+    QScrollArea
 from PyQt5.QtCore import Qt, QDate
 
 import datetime
 
+
 class InfoCard(QWidget):
-    def __init__(self, rows : int ,details : dict = None, title : str = None, placeHolderText : str = None):
+    def __init__(self, rows: int, details: dict = None, title: str = None, placeHolderText: str = None,
+                 scroll=True):
         super(InfoCard, self).__init__()
         self.detail = details
         self.rows = rows
         self.title = title
         self.placeHolderText = placeHolderText
+        self.scroll = scroll
         self.initializeUI()
 
         self.setObjectName("info-card")
@@ -26,6 +30,8 @@ class InfoCard(QWidget):
         self.setDetail(self.detail)
 
         vbox = QVBoxLayout()
+        vbox.setSpacing(5)
+        vbox.setContentsMargins(20, 10, 10, 10)
 
         if self.title:
             titleLabel = QLabel(self.title)
@@ -33,25 +39,33 @@ class InfoCard(QWidget):
             vbox.addWidget(titleLabel)
 
         vbox.addLayout(self.gridLayout)
-        baseWidget = QScrollArea()
-        baseWidget.setWidgetResizable(True)
-        baseWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        baseWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        baseWidget.setObjectName("base")
+        if self.scroll:
+            baseWidget = QScrollArea()
+            baseWidget.setWidgetResizable(True)
+            baseWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            baseWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-        widget = QWidget()
-        widget.setLayout(vbox)
-        baseWidget.setWidget(widget)
+            widget = QWidget()
+            widget.setObjectName("base")
+            widget.setLayout(vbox)
+            baseWidget.setWidget(widget)
 
-        self.setLayout(QVBoxLayout())
-        self.layout().addWidget(baseWidget)
+            self.setLayout(QVBoxLayout())
+            self.layout().addWidget(baseWidget)
+        else:
+            widget = QWidget()
+            widget.setObjectName("base")
+            widget.setLayout(vbox)
 
-    def setRows(self, row : int):
+            self.setLayout(QVBoxLayout())
+            self.layout().addWidget(widget)
+
+    def setRows(self, row: int):
 
         self.rows = row
         self.setDetail(self.detail)
 
-    def setDetail(self, detail : dict):
+    def setDetail(self, detail: dict):
 
         if not detail:
             label = QLabel(self.placeHolderText)

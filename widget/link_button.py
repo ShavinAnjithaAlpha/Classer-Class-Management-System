@@ -2,15 +2,15 @@ from PyQt5.QtWidgets import (QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLay
 from PyQt5.QtCore import Qt, QSize, pyqtSignal
 from PyQt5.QtGui import QPixmap
 
-class LinkButton(QWidget):
 
+class LinkButton(QWidget):
     clicked_signal = pyqtSignal(int)
 
     ICON_SIZE = QSize(100, 80)
     WIDGET_SIZE = QSize(320, 250)
     DEFAULT_ICON = ""
 
-    def __init__(self, title : str, description : str, icon : str = None, section_id = None):
+    def __init__(self, title: str, description: str, icon: str = None, section_id=None):
         super(LinkButton, self).__init__()
         self.section_id = section_id
 
@@ -44,7 +44,7 @@ class LinkButton(QWidget):
 
         vbox.addWidget(self.iconLabel, alignment=Qt.AlignCenter)
         vbox.addWidget(titleLabel, alignment=Qt.AlignHCenter)
-        vbox.addWidget(descriptionLabel, alignment=Qt.AlignTop|Qt.AlignHCenter)
+        vbox.addWidget(descriptionLabel, alignment=Qt.AlignTop | Qt.AlignHCenter)
 
         base_widget.setLayout(vbox)
         _vbox = QVBoxLayout()
@@ -58,13 +58,13 @@ class LinkButton(QWidget):
 
         self.clicked_signal.emit(self.section_id)
 
-class SubLinkButton(QWidget):
 
+class SubLinkButton(QWidget):
     ICON_SIZE = QSize(35, 35)
 
     clicked_signal = pyqtSignal(int)
 
-    def __init__(self, text : str, section_id : int , icon : str = None):
+    def __init__(self, text: str, section_id: int, icon: str = None):
         super(SubLinkButton, self).__init__()
         self.section_id = section_id
         self.setObjectName("sub-link-button")
@@ -97,22 +97,19 @@ class SubLinkButton(QWidget):
         self.layout().addWidget(widget)
 
     def mousePressEvent(self, event) -> None:
-
         self.clicked_signal.emit(self.section_id)
 
     def select(self):
-
         self.selectMarker.show()
 
     def unselect(self):
-
         self.selectMarker.hide()
 
+
 class CommandLinkButton(QWidget):
+    ICON_SIZE = QSize(70, 70)
 
-    ICON_SIZE =QSize(70, 70)
-
-    def __init__(self, text : str, description : str, icon : str = None, section_id : int = None):
+    def __init__(self, text: str, description: str, icon: str = None, section_id: int = None):
         super(CommandLinkButton, self).__init__()
         self.section_id = section_id
         self.setObjectName("command-link-button")
@@ -133,7 +130,6 @@ class CommandLinkButton(QWidget):
         grid.addWidget(textLabel, 0, 1, alignment=Qt.AlignHCenter)
         grid.addWidget(desLabel, 1, 1, alignment=Qt.AlignLeft)
 
-
         widget = QWidget()
         widget.setLayout(grid)
 
@@ -142,5 +138,3 @@ class CommandLinkButton(QWidget):
         self.setMaximumWidth(300)
         self.setMinimumHeight(200)
         self.setMaximumHeight(300)
-
-

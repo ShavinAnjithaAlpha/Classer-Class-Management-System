@@ -2,8 +2,8 @@ import json5
 
 ACCESS_FILE = "access_levels.json"
 
-def dict_str(details_dict : dict) -> str:
 
+def dict_str(details_dict: dict) -> str:
     dict_text = ""
 
     for key, value in details_dict.items():
@@ -11,8 +11,8 @@ def dict_str(details_dict : dict) -> str:
 
     return dict_text
 
-def getAccessIndexes(level = 0, section_id : int = 0, file = ACCESS_FILE):
 
+def getAccessIndexes(level=0, section_id: int = 0, file=ACCESS_FILE):
     with open(file) as file:
         data = json5.load(file)
 
@@ -29,11 +29,10 @@ def getAccessIndexes(level = 0, section_id : int = 0, file = ACCESS_FILE):
             if not "." in item[0]:
                 results.append((int(item[0]), item[1], item[2]))
 
-
     return results
 
-def checkAccessPreviliage(indexes : list, section : int, access_level : int) -> bool:
 
+def checkAccessPreviliage(indexes: list, section: int, access_level: int) -> bool:
     for item in indexes:
         if item[0] == section:
             if access_level == 1:

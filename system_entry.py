@@ -2,7 +2,7 @@ import mysql.connector as mysql
 import json5, os
 from PyQt5.QtWidgets import (QWidget, QLabel, QPushButton, QVBoxLayout, QGridLayout, QStackedWidget, QHBoxLayout,
                              QCheckBox, QStackedLayout, QLineEdit, QScrollArea, QCompleter, QMessageBox)
-from PyQt5.QtCore import Qt,QSize, QDate, QTime, QTimer, pyqtSignal
+from PyQt5.QtCore import Qt, QSize, QDate, QTime, QTimer, pyqtSignal
 from PyQt5.QtGui import QKeyEvent, QPixmap, QIcon
 
 from util.logger import Logger
@@ -15,11 +15,12 @@ from panel.student_panel import StudentPanel
 
 from SECTION_INDEXES import SUB_SECTION_INDEXES, KEYWORDS_MAP
 from util.common_functions import getAccessIndexes, checkAccessPreviliage
+
 ####################### end of import files ##########################
 global connection, logger, accessManager
-connection : mysql.MySQLConnection = None
-logger : Logger = None
-accessManager : AccessManager = None
+connection: mysql.MySQLConnection = None
+logger: Logger = None
+accessManager: AccessManager = None
 
 LINK_BUTTON_DETAILS = [
     ("Student Manager", "add new students, update, edit and search/view students", "resources/icons/widget.png"),
@@ -30,12 +31,13 @@ LINK_BUTTON_DETAILS = [
     ("Task Manager", "manage classes, create new class, modify and setup class", "resources/icons/widget.png")
 ]
 
-class SystemPanel(QWidget):
 
+class SystemPanel(QWidget):
     quitSignal = pyqtSignal()
     logoutSignal = pyqtSignal()
 
-    def __init__(self, _connection : mysql.MySQLConnection, _logger : Logger, _access_manager : AccessManager, *args, **kwargs):
+    def __init__(self, _connection: mysql.MySQLConnection, _logger: Logger, _access_manager: AccessManager, *args,
+                 **kwargs):
         super(SystemPanel, self).__init__()
         global connection, logger, accessManager
         connection = _connection
@@ -43,7 +45,6 @@ class SystemPanel(QWidget):
         accessManager = _access_manager
         # initiate the UI
         self.initializeUI()
-
 
     # static part of UI
     def initializeUI(self):
@@ -64,8 +65,8 @@ class SystemPanel(QWidget):
 
         # create search panel
         self.searchResultPanel = SearchResultPanel()
-        self.searchResultPanel.homeSignal.connect(lambda : self.stackLayout.setCurrentWidget(self.indexPanel))
-        self.searchResultPanel.searchSignal.connect(lambda e : self.addPanel(*e))
+        self.searchResultPanel.homeSignal.connect(lambda: self.stackLayout.setCurrentWidget(self.indexPanel))
+        self.searchResultPanel.searchSignal.connect(lambda e: self.addPanel(*e))
 
         # add to stack layout of main window
         self.stackLayout.addWidget(self.searchResultPanel)
@@ -117,7 +118,7 @@ class SystemPanel(QWidget):
         self.searchBar.setMaximumWidth(500)
         self.searchBar.setPlaceholderText("Find Sections and Sub Sections")
         self.searchBar.setObjectName("search-bar")
-        self.searchBar.returnPressed.connect(lambda e = self.searchBar : self.searchSections(e))
+        self.searchBar.returnPressed.connect(lambda e=self.searchBar: self.searchSections(e))
         self.searchBar.setCompleter(completer)
 
         searchIcon = QLabel()
@@ -168,8 +169,7 @@ class SystemPanel(QWidget):
             if not checkAccessPreviliage(accessIndex, i, accessManager.session["level"]):
                 linkButton.setDisabled(True)
 
-            self.linkLayout.addWidget(linkButton, i//5 ,i%5)
-
+            self.linkLayout.addWidget(linkButton, i // 5, i % 5)
 
         return linkScrollArea
 
@@ -182,19 +182,18 @@ class SystemPanel(QWidget):
         adminProfileButton = CommandLinkButton("Admin Profile", "view admin profile, update, edit, add fields",
                                                "resources/icons/admin-profile.png")
         userAccountButton = CommandLinkButton("Users", "view user account, update, remove, change",
-                                               "resources/icons/user.png")
+                                              "resources/icons/user.png")
 
         # get access privilege indexes
         accessIndexes = getAccessIndexes(0)
         buttonMap = {
-            -1 : logggerButton,
-            -2 : adminProfileButton,
-            -3 : userAccountButton
+            -1: logggerButton,
+            -2: adminProfileButton,
+            -3: userAccountButton
         }
         for i, button in buttonMap.items():
             if not checkAccessPreviliage(accessIndexes, i, accessManager.session["level"]):
                 button.setDisabled(True)
-
 
         # create logout button for system logout behaviour
         logoutButton = QPushButton()
@@ -206,10 +205,9 @@ class SystemPanel(QWidget):
         grid.addWidget(logggerButton, 0, 0)
         grid.addWidget(adminProfileButton, 0, 1)
         grid.addWidget(userAccountButton, 0, 2)
-        grid.addWidget(logoutButton, 0, 5, alignment=Qt.AlignRight|Qt.AlignBottom)
+        grid.addWidget(logoutButton, 0, 5, alignment=Qt.AlignRight | Qt.AlignBottom)
 
         return grid
-
 
     # dynamical behavior of UI
     def updateDateAndTime(self):
@@ -217,7 +215,7 @@ class SystemPanel(QWidget):
         self.dateLabel.setText(QDate.currentDate().toString("dddd MMM, dd"))
         self.timeLabel.setText(QTime.currentTime().toString("hh:mm"))
 
-    def addPanel(self, section_id : int, sub_section_id : int = 0):
+    def addPanel(self, section_id: int, sub_section_id: int = 0):
 
         if section_id in self.panelStack.keys():
             self.stackLayout.setCurrentIndex(self.panelStack.get(section_id, 0))
@@ -234,7 +232,7 @@ class SystemPanel(QWidget):
             # add to panel stack
             self.panelStack[section_id] = self.stackLayout.currentIndex()
 
-    def createPanel(self, section_id : int, sub_section_id : int) -> QWidget:
+    def createPanel(self, section_id: int, sub_section_id: int) -> QWidget:
 
         if section_id == 0:
             panel = StudentPanel(connection, logger, accessManager, sub_section_id, self)
@@ -245,12 +243,11 @@ class SystemPanel(QWidget):
         else:
             return QLabel("Register", parent=self)
 
-        panel.back_signal.connect(lambda : self.stackLayout.setCurrentWidget(self.indexPanel))
+        panel.back_signal.connect(lambda: self.stackLayout.setCurrentWidget(self.indexPanel))
         return panel
 
-
     # search functionalities
-    def isDirectKeyWord(self, keyword : str) -> bool:
+    def isDirectKeyWord(self, keyword: str) -> bool:
 
         # first check keyword in the subsection keywords
         for section, text, sub_section in SUB_SECTION_INDEXES.values():
@@ -258,13 +255,13 @@ class SystemPanel(QWidget):
                 return True
         return False
 
-    def getDirectIndexes(self, keyword : str) -> tuple[int]:
+    def getDirectIndexes(self, keyword: str) -> tuple[int]:
 
         for section, text, sub_section in SUB_SECTION_INDEXES.values():
             if text.lower() == keyword.lower():
                 return (section, sub_section)
 
-    def getSearchResult(self, keyword : str) -> list[tuple[int]]:
+    def getSearchResult(self, keyword: str) -> list[tuple[int]]:
 
         sub_section_ids = []
         for keys, sub_section_id in KEYWORDS_MAP.items():
@@ -279,7 +276,7 @@ class SystemPanel(QWidget):
 
         return results
 
-    def searchSections(self, searchBar : QLineEdit):
+    def searchSections(self, searchBar: QLineEdit):
 
         keyword = searchBar.text()
         if self.isDirectKeyWord(keyword):
@@ -293,15 +290,13 @@ class SystemPanel(QWidget):
             self.searchResultPanel.addSearchResults(index_results)
             self.stackLayout.setCurrentWidget(self.searchResultPanel)
 
-
     # overwrite methods - standard methods
-    def keyPressEvent(self, event : QKeyEvent) -> None:
+    def keyPressEvent(self, event: QKeyEvent) -> None:
 
         if event.key() == Qt.Key_Backspace:
             self.stackLayout.setCurrentWidget(self.indexPanel)
         elif event.key() == Qt.Key_Escape:
             self.close()
-
 
     def close(self) -> bool:
 
@@ -310,4 +305,3 @@ class SystemPanel(QWidget):
             # end the session
             accessManager.endSession()
             self.logoutSignal.emit()
-
