@@ -15,7 +15,7 @@ from panel.search_result_panel import SearchResultPanel
 from panel.student_panel import StudentPanel
 
 from SECTION_INDEXES import SUB_SECTION_INDEXES, KEYWORDS_MAP, SECTION_INDEXES
-from util.common_functions import getAccessIndexes, checkAccessPreviliage
+from util.common_functions import getAccessIndexes, checkAccessPreviliage, getSubSection, getSubSectionIndex
 
 ####################### end of import files ##########################
 global connection, logger, accessManager
@@ -301,10 +301,39 @@ class SystemPanel(QWidget):
 
     def openRecentPanels(self):
 
-        def closeDialog(event : QKeyEvent):
+        def closeDialog(event: QKeyEvent):
             if event.key() == Qt.Key_Escape:
                 panelDialog.close()
                 panelDialog.deleteLater()
+            elif event.key() == Qt.Key_Right:
+                subSectionListWidget.setFocus()
+            elif event.key() == Qt.Key_Left:
+                listWidget.setFocus()
+            elif event.key() == Qt.Key_Down:
+                listWidget.setFocus()
+            elif event.key() == Qt.Key_Enter:
+                if listWidget.currentItem() is not None and subSectionListWidget.currentItem() is not None:
+                    jumpToPanelWithSubSection(subSectionListWidget.currentItem())
+                elif listWidget.currentItem() is not None:
+                    jumpToPanel(listWidget.currentItem())
+                else:
+                    pass
+            elif event.key() == Qt.Key_Delete:
+
+                if listWidget.currentItem() is not None:
+                    # delete the panel
+                    panelIndex = None
+                    panelText = listWidget.currentItem().text()
+                    for i in SECTION_INDEXES.keys():
+                        if SECTION_INDEXES[i] == panelText:
+                            panelIndex = i
+                            break
+
+                    self.stackLayout.removeWidget(self.stackLayout.widget(self.panelStack[panelIndex]))
+                    self.panelStack.pop(panelIndex)
+                    # remove from the list
+                    listWidget.removeItemWidget(listWidget.currentItem())
+                    subSectionListWidget.clear()
 
         def searchRecent():
             text = searchBar.text()
@@ -315,48 +344,84 @@ class SystemPanel(QWidget):
                 else:
                     item.setHidden(True)
 
+        def jumpToPanel(listItem: QListWidgetItem):
+            # extract the text
+            panelIndex = None
+            panelText = listItem.text()
+            for i in SECTION_INDEXES.keys():
+                if SECTION_INDEXES[i] == panelText:
+                    panelIndex = i
+                    break
+
+            self.addPanel(panelIndex)
+            # close the panel dialog
+            panelDialog.close()
+            panelDialog.deleteLater()
+
+        def showSubSections(panelText: str):
+            # extract the text
+            panelIndex = None
+            for i in SECTION_INDEXES.keys():
+                if SECTION_INDEXES[i] == panelText:
+                    panelIndex = i
+                    break
+            # fill the list widget
+            subSectionListWidget.clear()
+            subSectionListWidget.addItems(getSubSection(panelIndex))
+
+        def jumpToPanelWithSubSection(item: QListWidgetItem):
+            # first get main section id
+            panelIndex = None
+            panelText = listWidget.selectedItems()[0].text()
+            for i in SECTION_INDEXES.keys():
+                if SECTION_INDEXES[i] == panelText:
+                    panelIndex = i
+                    break
+
+            # next find sub panel index
+            subSectionId = getSubSectionIndex(panelIndex, item.text())
+            if subSectionId is not None:
+                self.addPanel(panelIndex, subSectionId)
+            # close the dialog
+            panelDialog.close()
+            panelDialog.deleteLater()
+
         # create dialog window for show panel list
         panelDialog = QDialog(self)
         panelDialog.setModal(True)
         panelDialog.setWindowFlag(Qt.WindowStaysOnTopHint, True)
+        panelDialog.setWindowFlag(Qt.FramelessWindowHint, True)
         panelDialog.resize(600, 600)
         panelDialog.keyPressEvent = closeDialog
 
-
         # create panel list
         listWidget = QListWidget()
-        listWidget.addItems(list(map(lambda e : SECTION_INDEXES[e], self.panelStack.keys())))
-        listWidget.itemClicked.connect(lambda e, d = panelDialog : self.jumpToPanel(e, d))
+        listWidget.setSelectionMode(QListWidget.SingleSelection)
+        listWidget.addItems(list(map(lambda e: SECTION_INDEXES[e], self.panelStack.keys())))
+        listWidget.itemClicked.connect(jumpToPanel)
+        listWidget.currentTextChanged.connect(showSubSections)
+
+        # create subsection panel access list widget
+        subSectionListWidget = QListWidget()
+        subSectionListWidget.itemClicked.connect(jumpToPanelWithSubSection)
+        subSectionListWidget.pressed.connect(lambda index : jumpToPanelWithSubSection(subSectionListWidget.item(index.row())))
+        subSectionListWidget.setSelectionMode(QListWidget.SingleSelection)
 
         searchBar = QLineEdit()
         searchBar.setPlaceholderText("search recent")
-        searchBar.resize(500, 30)
+        searchBar.resize(400, 30)
         searchBar.setClearButtonEnabled(True)
         searchBar.textChanged.connect(searchRecent)
 
-        vbox = QVBoxLayout()
-        vbox.addWidget(searchBar)
-        vbox.addWidget(listWidget)
-        panelDialog.setLayout(vbox)
+        grid = QGridLayout()
+        grid.addWidget(QLabel("Recent Panels"), 0, 0)
+        grid.addWidget(searchBar, 0, 1)
+        grid.addWidget(listWidget, 1, 0)
+        grid.addWidget(subSectionListWidget, 1, 1)
+        panelDialog.setLayout(grid)
 
         panelDialog.show()
         panelDialog.exec_()
-
-    def jumpToPanel(self, listItem : QListWidgetItem, dialog : QDialog):
-
-        # extract the text
-        panelIndex = None
-        panelText = listItem.text()
-        for i in SECTION_INDEXES.keys():
-            if SECTION_INDEXES[i] == panelText:
-                panelIndex = i
-                break
-
-
-        self.addPanel(i)
-        # close the panel dialog
-        dialog.close()
-        dialog.deleteLater()
 
     # overwrite methods - standard methods
     def keyPressEvent(self, event: QKeyEvent) -> None:

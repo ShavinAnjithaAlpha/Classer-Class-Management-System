@@ -1,5 +1,7 @@
 import json5
 
+import SECTION_INDEXES
+
 ACCESS_FILE = "access_levels.json"
 
 
@@ -11,6 +13,21 @@ def dict_str(details_dict: dict) -> str:
 
     return dict_text
 
+def getSubSection(section_id : int) -> str:
+
+    items = []
+    for section_index, text, sub_section_id in SECTION_INDEXES.SUB_SECTION_INDEXES.values():
+        if section_index == section_id:
+            items.append(text)
+
+    return items
+
+def getSubSectionIndex(section_index : int, sub_section_text : str) -> int:
+
+    for section_id, text, sub_section_id in SECTION_INDEXES.SUB_SECTION_INDEXES.values():
+        if section_index == section_id and sub_section_text == text:
+            return sub_section_id
+    return None
 
 def getAccessIndexes(level=0, section_id: int = 0, file=ACCESS_FILE):
     with open(file) as file:

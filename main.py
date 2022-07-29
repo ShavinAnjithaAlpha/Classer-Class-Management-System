@@ -8,7 +8,7 @@ from util.logger import Logger
 
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QStackedLayout, QErrorMessage, QMessageBox)
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QKeyEvent
+from PyQt5.QtGui import QKeyEvent, QPalette, QColor
 
 from panel.system_bootup_panel import BootPanel
 from panel.admin_data_panel import AdminDataPanel
@@ -160,6 +160,30 @@ class Classer(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+
+    darkPalette = QPalette()
+    darkPalette.setColor(QPalette.ColorRole.Window, QColor(53, 53, 53))
+    darkPalette.setColor(QPalette.ColorRole.WindowText, Qt.white)
+    darkPalette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.WindowText, QColor(127, 127, 127))
+    darkPalette.setColor(QPalette.ColorRole.Base, QColor(42, 42, 42))
+    darkPalette.setColor(QPalette.ColorRole.AlternateBase, QColor(66, 66, 66))
+    darkPalette.setColor(QPalette.ColorRole.ToolTipBase, Qt.white)
+    darkPalette.setColor(QPalette.ColorRole.ToolTipText, Qt.white)
+    darkPalette.setColor(QPalette.ColorRole.Text, Qt.white)
+    darkPalette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Text, QColor(127, 127, 127))
+    darkPalette.setColor(QPalette.ColorRole.Dark, QColor(35, 35, 35))
+    darkPalette.setColor(QPalette.ColorRole.Shadow, QColor(20, 20, 20))
+    darkPalette.setColor(QPalette.ColorRole.Button, QColor(53, 53, 53))
+    darkPalette.setColor(QPalette.ColorRole.ButtonText, Qt.white)
+    darkPalette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.ButtonText, QColor(127, 127, 127))
+    darkPalette.setColor(QPalette.ColorRole.BrightText, Qt.red)
+    darkPalette.setColor(QPalette.ColorRole.Link, QColor(42, 130, 218))
+    darkPalette.setColor(QPalette.ColorRole.Highlight, QColor(42, 130,218))
+    darkPalette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Highlight, QColor(80, 80, 80))
+    darkPalette.setColor(QPalette.ColorRole.HighlightedText, Qt.white)
+    darkPalette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.HighlightedText, QColor(127, 127, 127))
+    app.setPalette(darkPalette)
+
     with open("style_sheet/style.css", "r") as file:
         style_sheet = file.read()
 

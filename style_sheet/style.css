@@ -1,3 +1,9 @@
+QToolTip {
+    background-color: rgba(20, 20, 20, 0.7);
+    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgb(40, 40, 40);
+}
+
 QWidget {
     font-family: Arial;
     font-weight: normal;
@@ -136,23 +142,24 @@ QRadioButton::indicator:!checked {
 }
 
 QCheckBox::indicator {
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
 }
 
 QCheckBox::indicator:checked {
-    image: url(resources/icons/checked.png);
+    image: url(resources/icons/check_box.png);
 }
 
 QCheckBox::indicator:!checked {
-    image: url(resources/icons/unchecked.png);
+    image: url(resources/icons/uncheck_box.png);
 }
 
 QComboBox {
     padding: 7px;
-    border: 1px solid blue;
+    border: 1px solid rgba(0, 0, 255, 0.7);
     padding: 5px;
     border-radius: 4px;
+    background-color: rgb(35, 35, 35);
 }
 
 QComboBox::drop-down {
@@ -172,12 +179,26 @@ QComboBox:on {
 }
 
 QComboBox QListView {
-    background-color: rgb(20, 20, 20);
+    background-color: rgb(50, 20, 20);
     border-radius: 5px;
     font-size: 23px;
     border: 1px solid rgba(0, 0, 0, 0.17);
     padding: 5px;
     outline: 0px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: rgb(30, 30, 30);
+    border: 1px solid rgb(100, 100, 100);
+    padding: 8px;
+    border-radius: 5px;
+    item-spacing: 8px;
+}
+QComboBox QAbstractItemView::section {
+    padding: 5px;
+    font-size: 20px;
+    margin-left: 5px;
+    background-color: blue;
 }
 
 QComboBox QListView:item {
@@ -202,11 +223,6 @@ QSpinBox, QDoubleSpinBox {
     padding: 7px;
 }
 
-QListWidgetItem {
-    font-size: 17px;
-    border-radius: 3px;
-}
-
 
 QDialog QPushButton {
     background-color: blue;
@@ -228,7 +244,7 @@ QDialog QLabel {
 }
 
 QGroupBox {
-    border: 1px solid rgba(100, 100, 100, 0.67);
+    border: 1px solid rgba(150, 150, 150, 0.7);
     border-radius: 5px;
     padding: 10px;
     margin: 5px;
@@ -277,24 +293,18 @@ QHeaderView::section:selected {
     background-color: rgb(0, 0, 250);
 }
 
-/*QTableView::section {*/
-/*    background-color: orange;*/
-/*    border: 1px solid rgba(255, 255, 255, 0.5);*/
-/*}*/
-
-
 QListView {
     background-color: rgb(30, 30, 30);
-    border-radius: 5px;
-    border: 1px solid rgb(150, 150, 150);
+    border-radius: 0px;
+    border: 1px solid rgb(70, 70, 70);
 }
 
 QListView::item {
     background-color: rgb(35, 35, 35);
-    font-size: 17px;
-    border-bottom: 1px solid rgb(200, 200, 200);
-    border-radius: 7px;
-    padding: 5px;
+    font-size: 18px;
+    border-bottom: 1px solid rgba(100, 100, 100, 0.5);
+    border-radius: 0px;
+    padding: 8px;
 }
 
 QListView::item:selected {
@@ -308,13 +318,20 @@ QListView QCheckBox::indicator {
 }
 
 QTableView {
+    background-color: rgb(40, 40, 40);
     selection-background-color: rgb(0, 0, 200);
     font-size: 17px;
-    padding: 7px;
+    padding: 0px;
+    border : 1px solid rgba(255, 255, 255, 0.7);
 }
 
 TableView::item {
     border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+QTableView QTableCorenerButton::section {
+    background: none;
+    border: none;
 }
 
 QScrollArea {
@@ -330,6 +347,96 @@ QCompleter QListView {
     padding: 10px;
     background-color: orangered;
 }
+
+/********************************horizontal scroll bar styling *****************************/
+QScrollBar:horizontal {
+    border: 1px solid rgb(20, 20, 20);
+    background-color: rgb(10, 10, 10);
+    height: 7px;
+    margin: 0px 16px 0px 16px;
+}
+
+QScrollBar::handle:horizontal {
+    background-color: rgb(0, 0, 150);
+    min-height: 20px;
+    border-radius: 2px;
+}
+
+QScrollBar::add-line:horizontal {
+    border-radius: 2px;
+    width : 14px;
+    subcontrol-position : right;
+    subcontrol-origin : margin;
+}
+
+QScrollBar::sub-line:horizontal {
+    sub-control-position : left;
+    sub-control-origin : margin;
+    width : 14px;
+    border-radius: 2px;
+}
+
+QScrollBar::right-arrow:horizontal, QScrollBar::left-arrow:horizontal {
+    background: none;
+
+}
+
+QScrollBar::add-page:horizontal , QScrollBar::sub-page:horizontal{
+    background: none;
+}
+
+/***************** vertcal scroll bar styling************************/
+QScrollBar:vertical {
+    border: 1px solid rgb(20, 20, 20);
+    background-color: rgb(10, 10, 10);
+    height: 7px;
+    margin: 0px 16px 0px 16px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: rgb(0, 0, 150);
+    min-height: 20px;
+    border-radius: 2px;
+}
+
+QScrollBar::add-line:vertical {
+    border-radius: 2px;
+    width : 14px;
+    subcontrol-position : right;
+    subcontrol-origin : margin;
+}
+
+QScrollBar::sub-line:vertical {
+    sub-control-position : left;
+    sub-control-origin : margin;
+    width : 14px;
+    border-radius: 2px;
+}
+
+QScrollBar::right-arrow:vertical, QScrollBar::left-arrow:vertical {
+    background: none;
+
+}
+
+QScrollBar::add-page:vertical , QScrollBar::sub-page:vertical{
+    background: none;
+}
+/**************************************************/
+QProgressBar {
+    border : 1px solid dimgrey;
+    border-radius: 1px;
+    text-align: center;
+}
+
+QProgressBar::chunk {
+    background-color: deepskyblue;
+    width : 2px;
+    margin: 0px;
+}
+
+
+
+
 
 QPushButton#plus_button {
     background: rgba(20, 0, 80, 0.8);
