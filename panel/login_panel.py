@@ -1,15 +1,10 @@
 import mysql.connector as mysql
-
-from PyQt5.QtWidgets import (QApplication, QWidget, QGridLayout, QGroupBox, QFormLayout, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QLabel,
+from PyQt5.QtCore import pyqtSignal, QTimer, QDate, QTime, pyqtSlot
+from PyQt5.QtWidgets import (QApplication, QWidget, QGridLayout, QGroupBox, QVBoxLayout, QPushButton, QLineEdit, QLabel,
                              QMessageBox, QErrorMessage)
-from PyQt5.QtCore import Qt, QSize, pyqtSignal, QTimer, QDate, QTime
 
-from style_sheet.boot_panel_style_sheet import style_sheet
 from style_sheet.main_style_sheet import main_style_sheet
-
 from util.security.access import AccessManager
-
-
 
 global accessManager , connection
 
@@ -27,7 +22,7 @@ class LoginPanel(QWidget):
 
         self.resize(self.screen().size())
         self.initializeUI()
-        self.setStyleSheet(style_sheet)
+        self.setObjectName("login-panel")
 
     def initializeUI(self):
 
@@ -78,7 +73,7 @@ class LoginPanel(QWidget):
         self.password_edit.returnPressed.connect(self.loggedToSystem)
 
         # other buttons to login forms
-        reset_password_button = QPushButton("Forger Password")
+        reset_password_button = QPushButton("Forget Password")
         reset_password_button.setObjectName("link")
 
         user_acc_button = QPushButton("Create User Account")
@@ -118,6 +113,7 @@ class LoginPanel(QWidget):
             err = QErrorMessage(self)
             err.showMessage(str(ex))
 
+    @pyqtSlot()
     def updateDateTime(self):
 
         self.time_label.setText(QTime.currentTime().toString("hh:mm"))

@@ -299,7 +299,7 @@ class StudentAddPanel(QWidget):
         self.countChart = QChart()
         self.countChart.setTitle("Registered Students Statics")
         self.countChart.setAnimationOptions(QChart.AllAnimations)
-        self.countChart.setTheme(QChart.ChartThemeLight)
+        self.countChart.setTheme(QChart.ChartThemeDark)
         chartView.setChart(self.countChart)
         chartView.setRenderHints(QPainter.Antialiasing)
 
@@ -353,7 +353,7 @@ class StudentAddPanel(QWidget):
         # create bar series
         barSet = QBarSet("Student Count")
         barSet.append([item[0] for item in data])
-        barSet.setColor(QColor.fromRgb(0, 250, 100))
+        barSet.setColor(QColor.fromRgb(100, 0, 200))
         barSeries = QBarSeries()
         barSeries.append(barSet)
 

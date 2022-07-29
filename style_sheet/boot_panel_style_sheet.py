@@ -1,7 +1,7 @@
 style_sheet = """
     
     
-    QWidget#main {
+    QWidget#bootup-panel QWidget#main {
             background-color : white;
             background-image : url(resources/images/wallpaper.jpg);
             background-position : center center;
@@ -10,35 +10,35 @@ style_sheet = """
             
             }
 
-    QLabel {
+    QWidget#bootup-panel QLabel {
             color : white;
             font-size : 22px;
             font-weight : 100;}
             
-    QLabel#title-label {
+    QWidget#bootup-panel QLabel#title-label {
             color : white;
             font-size : 100px;
             font-weight : 500;}
             
-    QLabel#date-label {
+    QWidget#bootup-panel QLabel#date-label {
         font-size : 75px;
         font-weight : 60;
         color : white;
     }
 
-    QLabel#time-label {
+    QWidget#bootup-panel QLabel#time-label {
         font-size : 170px;
         font-weight : 70;
         color : white;
     }
 
     
-    QPushButton#connect-btn {
+    QWidget#login-panel QPushButton#connect-btn {
             border-radius : 25px;
             font-size : 23px;
             font-weight : 400;}
     
-    QLineEdit {width : 300px;
+    QWidget#login-panel QLineEdit {width : 300px;
                 border-radius : 2px;
                 background-color : rgba(0, 0, 0, 0.0);
                 border : none;
@@ -46,9 +46,9 @@ style_sheet = """
                 color : white;
                 font-size : 22px;}
                 
-    QLineEdit:focus {border-bottom : 2px solid white;}
+    QWidget#login-panel QLineEdit:focus {border-bottom : 2px solid white;}
     
-    QGroupBox::title {color : white;
+    QWidget#login-panel QGroupBox::title {color : white;
                     font-size : 25px;
                     subcontrol-origin: margin;
                     subcontrol-position: top center;
@@ -56,13 +56,13 @@ style_sheet = """
                     padding: 10px 5px;
                     }
                     
-    QGroupBox {
+    QWidget#login-panel QGroupBox {
         font-size : 23px;
         padding : 70px 35px 30px 30px;
         border-radius : 20px;
         background-color : rgba(0, 0, 0, 0.5)}
         
-    QMessageBox QLabel {
+    QWidget#login-panel QMessageBox QLabel {
             color : black;
             font-size : 17px;
             }

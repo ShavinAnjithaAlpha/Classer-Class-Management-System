@@ -17,7 +17,7 @@ class BootPanel(QWidget):
         self.initializePanel()
 
         self.setContentsMargins(0, 0, 0, 0)
-        self.setStyleSheet(style_sheet)
+        self.setObjectName("login-panel")
         self.adjustSize()
 
 
