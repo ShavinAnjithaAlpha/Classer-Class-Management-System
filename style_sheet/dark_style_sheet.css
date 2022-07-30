@@ -118,9 +118,8 @@ QLineEdit:focus {
 }
 
 QDateEdit {
-    padding: 7px;
+    padding: 0px;
     font-size: 16px;
-    background-color: rgb(50, 50, 50);
 }
 
 QRadioButton, QCheckBox {

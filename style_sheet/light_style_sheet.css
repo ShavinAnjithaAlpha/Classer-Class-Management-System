@@ -1,0 +1,858 @@
+QToolTip {
+    background-color: rgba(20, 20, 20, 0.7);
+    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgb(40, 40, 40);
+}
+
+QWidget {
+    font-family: Arial;
+    font-weight: normal;
+    font-size: 17px;
+}
+
+.QWidget {
+    background-color: rgb(250, 250, 250);
+}
+
+QWidget#main {
+    background-image: url(resources/images/wallpaper_blur.jpg);
+}
+
+
+/**************************** button styling ***************/
+/***********************************************************/
+
+QPushButton {
+    background-color: blue;
+    color: white;
+    border: 1px solid rgb(0, 0, 200);
+    font-size: 18px;
+    padding: 10px 15px 10px 15px;
+    border-radius: 5px;
+    widget-animation-duration: 800ms;
+    button-layout: 2;
+}
+
+QPushButton:focus {
+    border: 2px solid rgb(0, 100, 200);
+}
+
+QPushButton:hover {
+    background-color: rgb(0, 0, 180)
+}
+
+QPushButton:pressed, QPushButton:clicked {
+    background-color: rgb(0, 0, 150);
+    color: rgb(150, 150, 150)
+}
+
+QPushButton:disabled {
+    background-color: rgb(0, 0, 130)
+}
+
+/***********************************************************/
+/***************special button styling**********************/
+
+QPushButton#red-btn, QPushButton[text='x'], QPushButton[text='X'] {
+    background: none;
+    border-radius: 0px;
+    border: none;
+}
+
+QPushButton#red-btn:hover, QPushButton#red-btn:pressed,
+QPushButton[text='x']:hover, QPushButton[text='X']:hover {
+    background-color: red;
+}
+
+QPushButton#link {
+    background: none;
+    border: none;
+    color: blue;
+    font-size: 17px;
+}
+
+QPushButton#link:hover, QPushButton#link:pressed {
+    color: rgb(0, 100, 255);
+    cursor: handle
+}
+
+QPushButton[text='close'], QPushButton[text='Close'], QPushButton[text='No'] {
+    background-color: red;
+    border: none;
+}
+
+QPushButton[text='close']:hover, QPushButton[text='Close']:hover, QPushButton[text='No']:hover {
+    background-color: rgb(200, 50, 0);
+}
+
+/***********************************************************/
+
+QPushButton#mainButtons:hover,
+QPushButton#mainButtons:pressed {
+    background: QLinearGradient(x1: 0,  y1: 0,  x2: 0,  y2: 1,  stop: 0 rgba(0, 10, 100, 0.5),  stop: 0.5 rgba(15, 15, 170, 0.5),  stop: 1 rgba(30, 0, 250, 0.5));
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+QLabel {
+    background: none;
+    color : black;
+}
+
+QLineEdit {
+    background-color: white;
+    padding: 7px;
+    font-size: 18px;
+    border: 1px solid rgba(150, 150, 150, 0.6);
+    border-radius: 4px;
+    color: black;
+}
+
+QLineEdit:hover {
+    border-color: rgb(200, 200, 200);
+}
+
+QLineEdit:focus {
+    border: 2px solid blue;
+}
+
+QDateEdit {
+    padding: 0px;
+    font-size: 16px;
+}
+
+QRadioButton, QCheckBox {
+    padding: 5px;
+    margin: 5px;
+}
+
+QRadioButton::indicator {
+    width: 25px;
+    height: 25px;
+}
+
+QRadioButton::indicator:checked {
+    image: url(resources/icons/radio-checked.png);
+}
+
+QRadioButton::indicator:!checked {
+    image: url(resources/icons/radio-unchecked.png);
+}
+
+QCheckBox::indicator {
+    width: 25px;
+    height: 25px;
+}
+
+QCheckBox::indicator:checked {
+    image: url(resources/icons/checked.png);
+}
+
+QCheckBox::indicator:!checked {
+    image: url(resources/icons/unchecked.png);
+}
+
+QComboBox {
+    padding: 8px;
+    border: 1px solid rgba(0, 0, 255, 0.6);
+    border-radius: 5px;
+}
+
+QComboBox:hover {
+    border : 1px solid blue;
+}
+
+QComboBox::drop-down {
+    background: none;
+    border: none;
+}
+
+QComboBox::down-arrow {
+    image: url(resources/icons/down-arrow.png);
+    width: 18px;
+    height: 18px;
+    margin-right: 15px
+}
+
+QComboBox:on {
+    border: 2px solid blue;
+}
+
+QComboBox QListView {
+    background-color: rgb(50, 20, 20);
+    font-size: 23px;
+    border: 1px solid rgba(0, 0, 0, 0.17);
+    padding: 5px;
+    outline: 0px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: whitesmoke;
+    border: 2px solid blue;
+    padding: 8px;
+}
+QComboBox QAbstractItemView::item {
+    padding: 5px;
+    font-size: 18px;
+    margin-left: 5px;
+    background-color: blue;
+}
+
+QComboBox QListView:item {
+    padding: 5px 7px 5px 8px;
+    margin: 7px;
+    border: none;
+    font-size: 18px;
+}
+
+QComboBox QListView:item:hover {
+    background-color: blue;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+QComboBox QListView:item:selected {
+    background-color: blue;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+
+QSpinBox, QDoubleSpinBox {
+    font-size: 16px;
+    padding: 7px;
+}
+
+
+QDialog QPushButton {
+    background-color: blue;
+    padding: 7px;
+    color: white;
+}
+
+QDialog QPushButton:hover {
+    background-color: rgb(0, 0, 200);
+}
+
+QDialog QPushButton[text='No'] {
+    background-color: red;
+    border: none;
+}
+
+QDialog QLabel {
+    font-size: 16px;
+}
+
+QGroupBox {
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px;
+    background-color: rgb(253, 253, 253);
+}
+
+QGroupBox::title {
+    color: black;
+    subcontrol-position : top center;
+    subcontrol-origin : margin;
+
+}
+
+QInputDialog QLineEdit {
+    min-width: 300px;
+    padding: 5px;
+}
+
+QMessageBox QLabel {
+    font-size: 17px;
+}
+
+QMessageBox QPushButton {
+    width: 100px;
+}
+
+QMessageBox QPushButton[text='No'] {
+    background-color: red;
+    border: none;
+}
+
+QErrorMessage QLabel {
+    color: rgba(255, 255, 255, 0.67);
+}
+
+QHeaderView::section {
+    background-color: rgb(0, 50, 250);
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    border-right: 1px solid rgb(0, 200, 250);
+    border-bottom: 1px solid blue;
+    padding: 5px;
+}
+
+QHeaderView::section:selected {
+    font-weight: bold;
+    background-color: rgb(0, 0, 250);
+}
+
+QListView {
+    background-color: white;
+    border-radius: 0px;
+    border: 1px solid rgb(70, 70, 70);
+}
+
+QListView::item {
+    background-color: whitesmoke;
+    font-size: 18px;
+    border-bottom: 1px solid rgba(100, 100, 100, 0.5);
+    border-radius: 0px;
+    padding: 8px;
+}
+
+QListView::item:selected {
+    background-color: blue;
+    color: white;
+}
+
+QListView QCheckBox::indicator {
+    min-width: 20px;
+    min-height: 20px;
+}
+
+QTableView {
+    selection-background-color: rgb(0, 0, 200);
+    font-size: 17px;
+    padding: 0px;
+    border : 1px solid rgba(255, 255, 255, 0.7);
+}
+
+TableView::item {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+QTableView QTableCorenerButton::section {
+    background: none;
+    border: none;
+}
+
+QScrollArea {
+    border: none;
+}
+
+QCompleter {
+    font-size: 22px;
+}
+QCompleter QAbstractItemView {
+    font-size: 23px;
+    padding: 10px;
+    border-radius: 8px;
+    border : 1px solid blue;
+}
+
+QCompleter QListView {
+    font-size: 20px;
+    border: 2px solid blue;
+}
+
+/********************************horizontal scroll bar styling *****************************/
+QScrollBar:horizontal {
+    border: 1px solid rgb(20, 20, 20);
+    background-color: rgb(10, 10, 10);
+    height: 7px;
+    margin: 0px 16px 0px 16px;
+}
+
+QScrollBar::handle:horizontal {
+    background-color: rgb(0, 0, 150);
+    min-height: 20px;
+    border-radius: 2px;
+}
+
+QScrollBar::add-line:horizontal {
+    border-radius: 2px;
+    width : 14px;
+    subcontrol-position : right;
+    subcontrol-origin : margin;
+}
+
+QScrollBar::sub-line:horizontal {
+    sub-control-position : left;
+    sub-control-origin : margin;
+    width : 14px;
+    border-radius: 2px;
+}
+
+QScrollBar::right-arrow:horizontal, QScrollBar::left-arrow:horizontal {
+    background: none;
+
+}
+
+QScrollBar::add-page:horizontal , QScrollBar::sub-page:horizontal{
+    background: none;
+}
+
+/***************** vertcal scroll bar styling************************/
+QScrollBar:vertical {
+    border: 1px solid rgb(20, 20, 20);
+    background-color: rgb(10, 10, 10);
+    height: 7px;
+    margin: 0px 16px 0px 16px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: rgb(0, 0, 150);
+    min-height: 20px;
+    border-radius: 2px;
+}
+
+QScrollBar::add-line:vertical {
+    border-radius: 2px;
+    width : 14px;
+    subcontrol-position : right;
+    subcontrol-origin : margin;
+}
+
+QScrollBar::sub-line:vertical {
+    sub-control-position : left;
+    sub-control-origin : margin;
+    width : 14px;
+    border-radius: 2px;
+}
+
+QScrollBar::right-arrow:vertical, QScrollBar::left-arrow:vertical {
+    background: none;
+
+}
+
+QScrollBar::add-page:vertical , QScrollBar::sub-page:vertical{
+    background: none;
+}
+/**************************************************/
+QProgressBar {
+    border : 1px solid dimgrey;
+    border-radius: 1px;
+    text-align: center;
+}
+
+QProgressBar::chunk {
+    background-color: deepskyblue;
+    width : 2px;
+    margin: 0px;
+}
+
+
+
+
+
+QPushButton#plus_button {
+    background: rgba(20, 0, 80, 0.8);
+    font-size: 25px;
+    padding: 12px;
+    color: white;
+    border: none;
+    border-radius: 0px;
+}
+
+QDateTimeEdit {
+    padding: 7px;
+    font-size: 20px;
+}
+
+QLabel#date-label {
+    font-size: 75px;
+    font-weight: 60;
+    color: white;
+    margin-left: 20px;
+}
+
+QLabel#time-label {
+    font-size: 170px;
+    font-weight: 70;
+    color: white;
+    margin-left: 20px;
+}
+
+QScrollArea#link-scroll-pane {
+    background-color: rgba(0, 0, 0, 0.0);
+    padding: 5px 100px 5px 100px;
+}
+
+QScrollArea#link-scroll-pane QWidget {
+    background-color: rgba(255, 255, 255, 0.0);
+}
+
+QLineEdit#search-bar {
+    border: none;
+    font-size: 25px;
+    width: 500px;
+    height: 35px;
+    margin: 5px 20px;
+    background-color: white;
+    color: black;
+}
+/**************************** login panel styling *********************/
+
+QWidget#login-panel QWidget#main {
+            background-color : white;
+            background-image : url(resources/images/wallpaper.jpg);
+            background-position : center center;
+            background-repeat : no-repeat;
+            background-fill : cover;
+
+            }
+
+QWidget#login-panel QLabel {
+            color : white;
+            font-size : 22px;
+            font-weight : 100;}
+
+QWidget#login-panel QLabel#title-label {
+    color : white;
+    font-size : 100px;
+    font-weight : 500;
+}
+
+QWidget#login-panel QLabel#date-label {
+        font-size : 75px;
+        font-weight : 60;
+        color : white;
+    }
+
+QWidget#login-panel QLabel#time-label {
+        font-size : 170px;
+        font-weight : 70;
+        color : white;
+    }
+
+QWidget#login-panel QPushButton#connect-btn {
+    border-radius : 25px;
+    font-size : 23px;
+    font-weight : 400;}
+
+QWidget#login-panel QLineEdit {
+                width : 300px;
+                border-radius : 2px;
+                background-color : rgba(0, 0, 0, 0.0);
+                border : none;
+                border-bottom : 2px solid rgba(255, 255, 255, 0.5);
+                color : white;
+                font-size : 22px;}
+
+QWidget#login-panel QLineEdit:focus {border-bottom : 2px solid white;}
+
+QWidget#login-panel QGroupBox::title {
+                    color : white;
+                    font-size : 25px;
+                    subcontrol-origin: margin;
+                    subcontrol-position: top center;
+                   /* position at the top center */
+                    padding: 10px 5px;
+                    }
+
+QWidget#login-panel QGroupBox {
+        font-size : 23px;
+        padding : 70px 35px 30px 30px;
+        border-radius : 20px;
+        background-color : rgba(0, 0, 0, 0.5);
+        border : none;}
+
+QWidget#login-panel QMessageBox QLabel {
+            color : black;
+            font-size : 17px;
+            }
+
+
+/* *********************** link button styling ***********************/
+QWidget#link-base-widget {
+    border: 1px solid rgba(100, 100, 100, 0.5);
+    border-radius: 15px;
+    padding: 15px 5px 10px 5px;
+}
+
+QWidget#link-base-widget > QLabel#title-label {
+    color: white;
+    font-weight: 200;
+    font-size: 27px;
+}
+
+QWidget#link-base-widget > QLabel#des-label {
+    color: rgba(250, 250, 250, 0.7);
+    font-size: 18px;
+    font-style: normal;
+    font-style: italic;
+}
+
+QWidget#link-base-widget:hover {
+    background-color: rgba(0, 0, 200, 0.5);
+    color: white;
+    border: 3px solid rgba(0, 0, 250, 0.7);
+}
+
+/******************* section panel styling *********************/
+
+/*QWidget#section-panel {*/
+/*    background-image: url(resources/images/wallpaper_blur.jpg);*/
+/*}*/
+
+QWidget#section-panel > QWidget#static-bar {
+    background-image: url(resources/images/wallpaper_blur.jpg);
+    border: none;
+}
+
+QWidget#section-panel QPushButton#show-button {
+    background: none;
+    border-radius: 0px;
+    padding: 10px;
+}
+
+QWidget#section-panel QPushButton#show-button {
+    background: none;
+    border: none;
+    font-size: 35px;
+    padding: 15px;
+    width: 50px;
+}
+
+QWidget#section-panel QPushButton#show-button:hover {
+    background-color: darkblue;
+}
+
+QWidget#section-panel QWidget#navigate {
+    background-image: url(resources/images/wallpaper_blur.jpg);
+}
+
+/********************************** sub link button styling *********************/
+
+QWidget#sub-link-button QWidget {
+    border-radius: 0px;
+    background: none;
+    margin: 0px;
+    padding: 15px 20px 15px 20px;
+    font-size: 22px;
+    border: none;
+}
+
+
+QWidget#sub-link-button > QWidget:hover {
+    background-color: rgba(0, 0, 200, 0.7);
+    color: white;
+    font-weight: 250;
+    margin: 0px;
+}
+
+QWidget#sub-link-button:disabled > QWidget:disabled {
+    background-color: rgba(255, 0, 0, 0.25);
+}
+
+QWidget#sub-link-button QLabel#marker {
+    background-color: dodgerblue;
+    margin: 0px;
+}
+
+QWidget#sub-link-button {
+    margin: 0px;
+}
+
+QWidget#sub-link-button QLabel {
+    color: white;
+    background: none;
+}
+
+QWidget#section-panel QLabel#title {
+    background: none;
+    font-size: 35px;
+    color: darkblue;
+    padding: 15px 25px 10px 30px;
+    min-width: 300px;
+
+}
+
+/************************** command link button *******************************/
+QWidget#command-link-button > QWidget {
+    background-color: rgba(0, 0, 255, 0.2);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 0px;
+}
+
+QWidget#command-link-button > QWidget:disabled {
+    border: none;
+    border-top: 3px solid red;
+    background-color: rgba(255, 0, 0, 0.2);
+}
+
+QWidget#command-link-button QLabel#text {
+    font-size: 25px;
+    color: white;
+    font-weight: 500;
+}
+
+QWidget#command-link-button QLabel#des {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 18px;
+    font-style: italic;
+    text-align: left;
+}
+
+QWidget#command-link-button > QWidget:hover {
+    background-color: rgba(0, 0, 250, 0.5);
+    border: 3px solid deepskyblue;
+}
+
+/****************************** search result panel styling ********************/
+QWidget#search-result-panel > QWidget {
+    background-image: url(resources/images/wallpaper_blur.jpg);
+}
+
+QWidget#search-result-panel QLabel#search-title {
+    font-size: 45px;
+    font-style: normal;
+    padding: 10px 25px;
+    color: white;
+}
+
+QWidget#search-result-panel QPushButton {
+    background: none;
+    border: 1px solid rgba(100, 100, 100, 0.5);
+    padding: 30px 20px;
+    text-align: left;
+    color: white;
+    font-size: 28px;
+    font-style: normal;
+    border-radius: 0px;
+    margin-left: 50px;
+    margin-top: 10px;
+
+}
+
+QWidget#search-result-panel QLabel#no-result {
+    color: white;
+    margin-left: 50px;
+    font-size: 22px;
+}
+
+QWidget#search-result-panel QPushButton:hover {
+    background-color: rgba(0, 0, 255, 0.7);
+    border: none;
+}
+
+
+/************************************************/
+QPushButton#logout-button {
+    background: none;
+    border: none;
+    border-radius: 0px;
+    max-width: 70px;
+    max-height: 70px;
+}
+
+QPushButton#logout-button:hover {
+    background-color: red;
+    padding: 10px;
+}
+
+QPushButton#home {
+    background: none;
+    border: none;
+    padding: 8px;
+    border-radius: 0px;
+}
+
+QPushButton#home:hover {
+    background-color: rgba(0, 0, 255, 0.7);
+}
+
+/******************************* add student panel ***************************/
+QWidget#add-student-panel QLabel#title {
+    font-size: 70px;
+    color: darkblue;
+}
+
+QWidget#add-student-panel QLabel#static-label {
+    font-size: 23px;
+}
+
+QWidget#add-student-panel QLabel#field-label {
+    font-size: 20px;
+}
+
+QWidget#add-student-panel QLabel#id-label {
+    font-size: 25px;
+    color: midnightblue;
+}
+
+/******************************* student panel styling ****************************/
+QWidget#student-panel QLabel#title {
+    color: rgb(0, 0, 100);
+    font-size: 60px;
+}
+
+QWidget#student-panel QLabel#title-2 {
+    color: rgb(0, 0, 100);
+    font-size: 60px;
+}
+
+
+/******************************* Info Card ***************************************/
+QWidget#info-card QWidget#base {
+    border-radius: 15px;
+    padding: 15px;
+    margin: 10px;
+    background-color: rgb(0, 0, 250);
+}
+
+QWidget#info-card QLabel {
+    color: white;
+}
+
+QWidget#info-card QLineEdit#value-field {
+    font-size: 20px;
+    background-color: rgba(0, 0, 0, 0.0);
+    border: none;
+    color: rgba(255, 255, 255, 0.85);
+    font-style: normal;
+    selection-background-color: darkblue;
+}
+
+QWidget#info-card QLabel#title {
+    font-size: 22px;
+    font-weight: 300;
+    border-bottom: 3px solid rgb(0, 0, 255);
+    color: white;
+}
+
+QWidget#info-card QLabel#profile-label {
+    background-color: darkblue;
+    padding: 8px;
+    font-size: 28px;
+    max-width: 50px;
+    max-height: 50px;
+    min-width: 50px;
+    min-height: 50px;
+    border-radius: 30px;
+    border: none;
+    color: white;
+}
+
+QWidget#info-card QLabel#id-label {
+    font-size: 28px;
+    font-style: initial;
+    background-color: crimson;
+    border-radius: 20px;
+    padding: 10px;
+}
+
+QWidget#info-card QLabel#name-label {
+    font-size: 35px;
+    font-weight: 400;
+    color: white;
+}
+
+QWidget#info-card QLabel#user-label {
+    color: deepskyblue;
+    font-style: italic;
+}
+
+QWidget#info-card QLabel#key-label {
+    color: white;
+    font-size: 20px;
+    font-weight: 100;
+}

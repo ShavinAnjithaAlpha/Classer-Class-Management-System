@@ -182,9 +182,9 @@ if __name__ == '__main__':
     darkPalette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Highlight, QColor(80, 80, 80))
     darkPalette.setColor(QPalette.ColorRole.HighlightedText, Qt.white)
     darkPalette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.HighlightedText, QColor(127, 127, 127))
-    app.setPalette(darkPalette)
+    # app.setPalette(darkPalette)
 
-    with open("style_sheet/style.css", "r") as file:
+    with open("style_sheet/light_style_sheet.css", "r") as file:
         style_sheet = file.read()
 
     app.setStyleSheet(style_sheet)
