@@ -258,6 +258,7 @@ class StudentAddPanel(QWidget):
         form = QFormLayout()
         form.setLabelAlignment(Qt.AlignLeft)
         countGroupBox.setLayout(form)
+
         # add labels to group box
         for field, label in {"Total Students" : self.totalStudentLabel,
                              "Total Students (Registered Last Month)" : self.lastMonthStudentLabel,
@@ -267,7 +268,6 @@ class StudentAddPanel(QWidget):
             form.addRow(fieldLabel, label)
             label.setObjectName("static-label")
             label.setAlignment(Qt.AlignRight)
-
 
         # create main right side layout
         vbox = QVBoxLayout()
@@ -297,9 +297,10 @@ class StudentAddPanel(QWidget):
         # create chart view and chart instance
         chartView = QChartView()
         self.countChart = QChart()
+
         self.countChart.setTitle("Registered Students Statics")
         self.countChart.setAnimationOptions(QChart.AllAnimations)
-        self.countChart.setTheme(QChart.ChartThemeDark)
+        self.countChart.setTheme(QChart.ChartThemeBlueNcs)
         chartView.setChart(self.countChart)
         chartView.setRenderHints(QPainter.Antialiasing)
 
@@ -349,6 +350,8 @@ class StudentAddPanel(QWidget):
 
         # load the data
         data = self.loadData()
+        if not data:
+            return # no graph if there are no data
 
         # create bar series
         barSet = QBarSet("Student Count")
@@ -393,6 +396,8 @@ class StudentAddPanel(QWidget):
 
         # load the data
         data = self.loadData()
+        if not data:
+            return # no graph if there are no data
 
         # fill line series with these data
         max = -1

@@ -1,9 +1,10 @@
-import typing
+import datetime
+import typing, re
 
 from PyQt5.QtWidgets import (QWidget, QPushButton, QProgressBar, QTableView, QCheckBox, QRadioButton, QLineEdit, QLabel,
                              QHBoxLayout, QScrollArea,
                              QGridLayout, QHeaderView, QVBoxLayout, QMenu, QGroupBox, QButtonGroup, QActionGroup,
-                             QAction, QComboBox)
+                             QAction, QComboBox, QListWidget, QListWidgetItem)
 from PyQt5.QtCore import Qt, QSize, QSortFilterProxyModel, QRegularExpression, QModelIndex, QThread, pyqtSignal, \
     QThreadPool
 from PyQt5.QtGui import QPixmap
@@ -11,6 +12,8 @@ from PyQt5.QtGui import QPixmap
 from model.student_model import StudentModel
 from panel.section_panel import SectionPanel
 from panel.add_student_panel import StudentAddPanel
+
+from util.time_engine import DateTimeUtil
 
 from widget.StudentCard import StudentCard
 
@@ -20,22 +23,64 @@ class StudentSearcher(QThread):
     progressChanged = pyqtSignal(float)
     finished = pyqtSignal()
 
-    def __init__(self, keyWord: str, model: StudentModel):
+    def __init__(self, keyWord: str, model: StudentModel, searchField: str, filterOptions: dict, groupField):
         super(StudentSearcher, self).__init__()
         self.searchKeyWord = keyWord
         self.model = model
+        self.searchField = searchField
+        self.filterOptions = filterOptions
+        self.groupFiled = groupField
 
     def run(self) -> None:
 
-        length = len(self.model._dataSet)
-        for i, student in enumerate(self.model._dataSet):
-            if self.searchKeyWord.lower() in student["Username"].lower():
-                # create student card and add it
-                card = StudentCard(4, student, scroll=False)
-                self.resultChanged.emit(card)
-            self.progressChanged.emit((i + 1) / length)
+        # first apply the filter to student model data set
+        dataSet = self.model._dataSet
+        if self.filterOptions:
+            # apply sex filter
+            if not self.filterOptions["Sex"] == "All":
+                dataSet = list(filter(lambda e: e["Sex"] == self.filterOptions["Sex"].lower(), dataSet))
+            self.progressChanged.emit(0.1)
+
+            # apply school filter
+            if not self.filterOptions["School"] == "All School":
+                dataSet = list(filter(lambda e: e["School"] == self.filterOptions["School"], dataSet))
+            self.progressChanged.emit(0.2)
+
+            # apply grade filter
+            if not self.filterOptions["Grade"] == -1:
+                dataSet = list(filter(self.checkGrade, dataSet))
+            self.progressChanged.emit(0.3)
+
+            # apply time filter
+            if not self.filterOptions["Registered At"] == "All Time":
+                dataSet = list(filter(self.checkTime, dataSet))
+
+
+        # now process the search operations
+        length = len(dataSet)
+        for i, student in enumerate(dataSet):
+            if self.searchKeyWord.lower() in str(student[self.searchField]).lower():
+                # create student card and return it
+                self.resultChanged.emit(StudentCard(4, student, scroll=False))
+            self.progressChanged.emit(0.3 + i / length * 0.7)
 
         self.finished.emit()
+
+    def checkGrade(self, student: dict) -> bool:
+
+        if self.filterOptions["Grade"] == -2:
+            return DateTimeUtil.gradeFromDate(student["Birthday"]) > 13
+        else:
+            return DateTimeUtil.gradeFromDate(student["Birthday"]) == int(self.filterOptions["Grade"])
+
+    def checkTime(self, student : dict) -> bool:
+
+        if self.filterOptions["Registered At"] == "Last Year":
+            return student['Registered At'].year == datetime.datetime.now().year
+        elif self.filterOptions["Registered At"] == "Last Month":
+            return student["Registered At"].month == datetime.datetime.now().month and student["Registered At"].year == datetime.datetime.now().year
+        else:
+            return True
 
 
 class StudentPanel(SectionPanel):
@@ -65,6 +110,9 @@ class StudentPanel(SectionPanel):
         else:
             return QLabel()
 
+
+
+    # design and develop student table panel UI and its processing side methods
     def createTablePanel(self) -> QWidget:
 
         titleLabel = QLabel("Student Data")
@@ -302,13 +350,17 @@ class StudentPanel(SectionPanel):
         self.proxyStudentModel.sort(self.studentModel.fields.index(sortField),
                                     Qt.AscendingOrder if sortOrder == "Asc" else Qt.DescendingOrder)
 
+
+
+    # design and develop the student search panel UI and its processing events
     def createStudentSearchPanel(self) -> QWidget:
 
         titleLabel = QLabel("Search Students")
-        titleLabel.setObjectName("title-2")
+        titleLabel.setObjectName("title")
 
         # create search result add layout
         self.searchResultLayout = QVBoxLayout()
+        self.searchResultLayout.setSpacing(0)
         # create search result widget list
         self.searchResultWidgets = []
 
@@ -332,14 +384,20 @@ class StudentPanel(SectionPanel):
         hbox.addWidget(self.statusLabel)
         hbox.addStretch()
 
+        self.studentDisplayMethodCheckBox = QCheckBox("Shortest Mode for Display Students")
+
         # create vbox layout for packing all widgets
         vbox = QVBoxLayout()
         vbox.addWidget(titleLabel)
+        vbox.addWidget(self.studentDisplayMethodCheckBox, alignment=Qt.AlignRight)
         vbox.addWidget(self.createSearchOptionPanel())
-        vbox.addWidget(resultScrollArea)
+        vbox.addWidget(self.createFilterOptionBox())
+        vbox.addWidget(self.createCategaryBox())
+        vbox.addWidget(resultScrollArea, stretch=5)
         vbox.addLayout(hbox)
 
         widget = QWidget()
+        widget.setObjectName("student-search-panel")
         widget.setLayout(vbox)
         return widget
 
@@ -351,12 +409,77 @@ class StudentPanel(SectionPanel):
         self.studentSearchBar.setClearButtonEnabled(True)
         self.studentSearchBar.returnPressed.connect(self.populateStudents)
 
+        self.searchFieldMenu = QComboBox()
+        self.searchFieldMenu.addItems(self.studentModel.fields)
+
+        searchButton = QPushButton("Search")
+        searchButton.pressed.connect(self.populateStudents)
+
         grid = QGridLayout()
-        grid.addWidget(self.studentSearchBar, 0, 0, 1, 2)
+        grid.setHorizontalSpacing(20)
+        grid.addWidget(QLabel("Search"), 0, 0, alignment=Qt.AlignLeft)
+        grid.addWidget(self.studentSearchBar, 1, 0, 1, 2)
+        grid.addWidget(QLabel("Search Field"), 0, 2, alignment=Qt.AlignLeft)
+        grid.addWidget(self.searchFieldMenu, 1, 2)
+        grid.addWidget(searchButton, 1, 3)
 
         searchGroupBox = QGroupBox("Search Options")
         searchGroupBox.setLayout(grid)
         return searchGroupBox
+
+    def createFilterOptionBox(self) -> QGroupBox:
+
+        self.sexComboBox = QComboBox()
+        self.sexComboBox.addItems(["All", "Male", "Female", "Other"])
+
+        self.schoolComboBox = QComboBox()
+        self.schoolComboBox.addItems(set(self.studentModel.studentManager.getValuesFromKey("school")))
+        self.schoolComboBox.addItem("All School", -1)
+        self.schoolComboBox.setCurrentIndex(0)
+
+        self.gradeComboBox = QComboBox()
+        self.gradeComboBox.addItem("All Grades", -1)
+        for i in range(1, 14):
+            self.gradeComboBox.addItem(f"Grade {i}", i)
+        self.gradeComboBox.addItem("Above 13", -2)
+
+        self.timeComboBox = QComboBox()
+        self.timeComboBox.addItem("All Time", -1)
+        self.timeComboBox.addItems(["Last Week", "Last Month", "Last Year"])
+
+        grid = QGridLayout()
+        grid.setHorizontalSpacing(20)
+        grid.addWidget(QLabel("Sex"), 0, 0)
+        grid.addWidget(self.sexComboBox, 1, 0)
+        grid.addWidget(QLabel("School"), 0, 1)
+        grid.addWidget(self.schoolComboBox, 1, 1)
+        grid.addWidget(QLabel("Grade"), 0, 2)
+        grid.addWidget(self.gradeComboBox, 1, 2)
+        grid.addWidget(QLabel("Registered At"), 0, 3)
+        grid.addWidget(self.timeComboBox, 1, 3)
+
+        filterGroupBox = QGroupBox("Filter Options")
+        filterGroupBox.setLayout(grid)
+        return filterGroupBox
+
+    def createCategaryBox(self) -> QGroupBox:
+
+
+        grid = QGridLayout()
+        grid.setHorizontalSpacing(20)
+
+        self.groupCheckBoxes = QButtonGroup(self)
+        for i, value in enumerate(["Sex", "School", "Grade"]):
+            button = QRadioButton(value)
+            grid.addWidget(button, 0, i)
+            self.groupCheckBoxes.addButton(button, i)
+        self.groupCheckBoxes.setExclusive(True)
+
+
+        categoaryBox = QGroupBox("Group By")
+        categoaryBox.setLayout(grid)
+        return categoaryBox
+
 
     def populateStudents(self):
 
@@ -365,8 +488,18 @@ class StudentPanel(SectionPanel):
 
         # get the search keyword
         searchKeyWord = self.studentSearchBar.text()
+        searchFiled = self.searchFieldMenu.currentText()
+        filterOptions = {
+            "Sex": self.sexComboBox.currentText(),
+            "School": self.schoolComboBox.currentText(),
+            "Grade": self.gradeComboBox.currentData(),
+            "Registered At": self.timeComboBox.currentText()
+        }
+        groupFiled = None
+        if self.groupCheckBoxes.checkedButton() is not None:
+            groupField = self.groupCheckBoxes.checkedButton().text()
         # create student search thread and run it
-        worker = StudentSearcher(searchKeyWord, self.studentModel)
+        worker = StudentSearcher(searchKeyWord, self.studentModel, searchFiled, filterOptions, groupField)
         worker.resultChanged.connect(self.addSearchResult)
         worker.progressChanged.connect(lambda e: self.searchProgressBar.setValue(e * 100))
         worker.finished.connect(self.searchingFinished)

@@ -22,6 +22,7 @@ class SectionPanel(QWidget):
     def __init__(self, section_id: int, sub_sections: list, title: str, current_sub_section_id: int = 0, parent=None, *,
                  connection_=None, access_manager_=None, logger_=None):
         super(SectionPanel, self).__init__()
+
         self.current_sub_section_id = current_sub_section_id
         self.section_id = section_id
         self.sub_sections = sub_sections
@@ -34,6 +35,7 @@ class SectionPanel(QWidget):
         accessManager = access_manager_
 
         self.initializeUI()
+
         self.setObjectName("section-panel")
 
     # static part of UI
@@ -82,6 +84,7 @@ class SectionPanel(QWidget):
         self.stackWidget.setContentsMargins(0, 0, 0, 0)
         # set current widget
         self.setCurrentPanel(self.current_sub_section_id, self.navigateButtons[self.current_sub_section_id])
+
         # create h box
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0, 0, 0, 0)

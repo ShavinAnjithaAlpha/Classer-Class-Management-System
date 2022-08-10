@@ -133,24 +133,24 @@ QRadioButton::indicator {
 }
 
 QRadioButton::indicator:checked {
-    image: url(resources/icons/radio-checked.png);
+    image: url(resources/icons/radio-button.png);
 }
 
 QRadioButton::indicator:!checked {
-    image: url(resources/icons/radio-unchecked.png);
+    image: url(resources/icons/radio-button (1).png);
 }
 
 QCheckBox::indicator {
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
 }
 
 QCheckBox::indicator:checked {
-    image: url(resources/icons/checked.png);
+    image: url(resources/icons/check (1).png);
 }
 
 QCheckBox::indicator:!checked {
-    image: url(resources/icons/unchecked.png);
+    image: url(resources/icons/check-box-blank.png);
 }
 
 QComboBox {
@@ -762,8 +762,8 @@ QPushButton#home:hover {
 
 /******************************* add student panel ***************************/
 QWidget#add-student-panel QLabel#title {
-    font-size: 70px;
-    color: darkblue;
+    font-size: 60px;
+    color: rgb(0, 0, 100);
 }
 
 QWidget#add-student-panel QLabel#static-label {
@@ -780,34 +780,31 @@ QWidget#add-student-panel QLabel#id-label {
 }
 
 /******************************* student panel styling ****************************/
-QWidget#student-panel QLabel#title {
+QWidget#student-panel QLabel#title, QWidget#search-student-panel QLabel#title {
     color: rgb(0, 0, 100);
     font-size: 60px;
 }
 
-QWidget#student-panel QLabel#title-2 {
-    color: rgb(0, 0, 100);
-    font-size: 60px;
-}
 
 
 /******************************* Info Card ***************************************/
 QWidget#info-card QWidget#base {
-    border-radius: 15px;
     padding: 15px;
     margin: 10px;
-    background-color: rgb(0, 0, 250);
+    background-color: rgb(245, 250, 255, 0.7);
+    border-bottom : 2px solid rgba(0, 0, 0, 0.1);
+    border-top: 2px solid rgba(0, 0, 0, 0.1);
 }
 
 QWidget#info-card QLabel {
-    color: white;
+    color: black;
 }
 
 QWidget#info-card QLineEdit#value-field {
     font-size: 20px;
     background-color: rgba(0, 0, 0, 0.0);
     border: none;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(0, 0, 0, 0.65);
     font-style: normal;
     selection-background-color: darkblue;
 }
@@ -816,7 +813,7 @@ QWidget#info-card QLabel#title {
     font-size: 22px;
     font-weight: 300;
     border-bottom: 3px solid rgb(0, 0, 255);
-    color: white;
+    color: black;
 }
 
 QWidget#info-card QLabel#profile-label {
@@ -829,7 +826,7 @@ QWidget#info-card QLabel#profile-label {
     min-height: 50px;
     border-radius: 30px;
     border: none;
-    color: white;
+    color: black;
 }
 
 QWidget#info-card QLabel#id-label {
@@ -843,7 +840,7 @@ QWidget#info-card QLabel#id-label {
 QWidget#info-card QLabel#name-label {
     font-size: 35px;
     font-weight: 400;
-    color: white;
+    color: rgba(0, 0, 0, 0.8);
 }
 
 QWidget#info-card QLabel#user-label {
@@ -852,7 +849,7 @@ QWidget#info-card QLabel#user-label {
 }
 
 QWidget#info-card QLabel#key-label {
-    color: white;
+    color: rgba(0, 0, 0, 0.7);
     font-size: 20px;
     font-weight: 100;
 }

@@ -25,6 +25,7 @@ class InfoCard(QWidget):
         self.widgets = list()
 
         self.gridLayout = QGridLayout()
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setSpacing(5)
 
         self.setDetail(self.detail)
@@ -41,24 +42,32 @@ class InfoCard(QWidget):
         vbox.addLayout(self.gridLayout)
         if self.scroll:
             baseWidget = QScrollArea()
+            baseWidget.setContentsMargins(0, 0, 0, 0)
             baseWidget.setWidgetResizable(True)
             baseWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             baseWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
             widget = QWidget()
+            widget.setContentsMargins(0, 0, 0, 0)
             widget.setObjectName("base")
             widget.setLayout(vbox)
             baseWidget.setWidget(widget)
 
-            self.setLayout(QVBoxLayout())
+            vbox = QVBoxLayout()
+            vbox.setContentsMargins(0, 0, 0, 0)
+            self.setLayout(vbox)
             self.layout().addWidget(baseWidget)
         else:
             widget = QWidget()
+            widget.setContentsMargins(0, 0, 0, 0)
             widget.setObjectName("base")
             widget.setLayout(vbox)
 
-            self.setLayout(QVBoxLayout())
+            vbox = QVBoxLayout()
+            vbox.setContentsMargins(0, 0, 0, 0)
+            self.setLayout(vbox)
             self.layout().addWidget(widget)
+        self.setContentsMargins(0, 0, 0, 0)
 
     def setRows(self, row: int):
 
